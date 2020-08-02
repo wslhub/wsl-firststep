@@ -4,4 +4,6 @@ Visual Studio Code에서도 WSL 연동 기능을 제공합니다. Visual Studio 
 
 https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl
 
-<img src="https://microsoft.github.io/vscode-remote-release/images/wsl-readme.gif" alt="Visual Studio Code용 WSL 플러그인 동작 예시" />
+이미지 출처: https://microsoft.github.io/vscode-remote-release/images/wsl-readme.gif
+
+<img src="wsl-readme.gif" alt="Visual Studio Code용 WSL 플러그인 동작 예시" />

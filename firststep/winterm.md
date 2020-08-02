@@ -45,3 +45,43 @@ Oh-my-zsh 등에서 사용하는 꾸밈 폰트가 잘 적용될 수 있도록 Po
   ...
   ```
 - 파일을 저장하고 새 탭을 띄웠을 때 잘 열리는지 확인합니다.
+
+## 터미널 Theme 설정하기
+Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula은 아래와 같이 설정하면 됩니다.
+
+```
+  "profiles":
+  {
+    "defaults": {
+      "acrylicOpacity": 0.1,
+      "closeOnExit": true,
+      "colorScheme": "Dracula",
+      "cursorColor": "#FFFFFF",
+      "cursorShape": "bar"
+    },
+    "list": [ ... ],
+  }
+  "schemes": [
+  {
+    "background": "#282A36",
+    "black": "#21222C",
+    "blue": "#BD93F9",
+    "brightBlack": "#6272A4",
+    "brightBlue": "#D6ACFF",
+    "brightCyan": "#A4FFFF",
+    "brightGreen": "#69FF94",
+    "brightPurple": "#FF92DF",
+    "brightRed": "#FF6E6E",
+    "brightWhite": "#FFFFFF",
+    "brightYellow": "#FFFFA5",
+    "cyan": "#8BE9FD",
+    "foreground": "#F8F8F2",
+    "green": "#50FA7B",
+    "name": "Dracula",
+    "purple": "#FF79C6",
+    "red": "#FF5555",
+    "white": "#F8F8F2",
+    "yellow": "#F1FA8C"
+  }],
+
+```

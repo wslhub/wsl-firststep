@@ -6,6 +6,7 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 - 처음에 할 일
   - [Ubuntu](firststep/ubuntu.md)
   - [Windows Terminal](firststep/winterm.md)  
+  - [Docker 설치하기](firststep/docker.md)
 
 ---
 

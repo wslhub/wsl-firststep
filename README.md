@@ -15,4 +15,10 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 
 WSL에 관한 여러가지 정보를 공유하고 질문 답변을 할 수 있는 커뮤니티를 찾고 계신가요? 한국 WSL 사용자 그룹으로 오세요!
 
-https://www.facebook.com/groups/wslhub/
+[https://www.facebook.com/groups/wslhub/]
+
+---
+
+이 리포지터리의 웹 사이트 버전은 아래 URL로 접속하실 수 있습니다.
+
+[http://rkttu.com/wsl-firststep]

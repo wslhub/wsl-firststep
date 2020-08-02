@@ -4,5 +4,5 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 
 - [WSL 2 설치하기](install-wsl-2.md)
 - 처음에 할 일
-  - [Ubuntu](ubuntu-firststep.md)
+  - [Ubuntu](firststep/ubuntu.md)
   

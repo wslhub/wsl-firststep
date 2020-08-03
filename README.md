@@ -13,6 +13,12 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 - [Visual Studio Code](firststep/vscode.md)
 - [SSH 키 설정하기](firststep/sshkey.md)
 
+## 프로그래밍 언어 별 개발 환경 설정하기
+
+- [오픈 JDK 설치하기](devsetup/openjdk.md)
+- [닷넷 코어 또는 모노 설치하기](devsetup/dotnet.md)
+- [Golang 설치하기](devsetup/golang.md)
+
 ---
 
 WSL에 관한 여러가지 정보를 공유하고 질문 답변을 할 수 있는 커뮤니티를 찾고 계신가요? 한국 WSL 사용자 그룹으로 오세요!

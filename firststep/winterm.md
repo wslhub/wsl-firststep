@@ -23,9 +23,11 @@ Windows Terminal을 처음 설치하면 기본적으로 PowerShell을 사용하�
 - `startingDirectory` 프로퍼티에 WSL의 네트워크 드라이브 경로를 넣습니다. JSON 문법에 어긋나지 않게 백 슬래시는 두 번씩 써줍니다.
 
   ```json
-  ...
-  "startingDirectory": "\\\\wsl$\\Ubuntu-20.04\\home\\Username",
-  ...
+  {
+    ...
+    "startingDirectory": "\\\\wsl$\\Ubuntu-20.04\\home\\Username",
+    ...
+  }
   ```
 - 파일을 저장하고 새 탭을 띄웠을 때 잘 열리는지 확인합니다.
 
@@ -33,21 +35,24 @@ Windows Terminal을 처음 설치하면 기본적으로 PowerShell을 사용하�
 
 ## Powerline 폰트 설정하기
 
-Oh-my-zsh 등에서 사용하는 꾸밈 폰트가 잘 적용될 수 있도록 Powerline 폰트를 설치합니다. Windows Terminal과 함께 캐스캐디아 코드, 캐스캐디아 모노가 같이 배포되며, 한국어 글꼴과 폭이 맞는 서체를 찾으신다면 네이버의 D2코딩 폰트를 추천합니다.
+Oh-my-zsh 등에서 사용하는 꾸밈 폰트가 잘 적용될 수 있도록 Powerline 폰트를 설치합니다. Windows Terminal과 함께 캐스캐디아 코드, 캐스캐디아 모노가 같이 배포되며, 한국어 글꼴과 폭이 맞는 서체를 찾으신다면 [네이버의 D2코딩 폰트](https://github.com/naver/d2codingfont)를 추천합니다.
 
 - `profiles` -> `list` 항목에서 Ubuntu Linux 또는 사용하려는 WSL 배포판에 해당하는 부분을 찾습니다.
 
 - `fontFace` 프로퍼티에 원하는 폰트를 넣습니다. JSON 문법에 어긋나지 않게 백 슬래시는 두 번씩 써줍니다.
 
   ```json
-  ...
-  "fontFace": "Cascadia Code PL",
-  ...
+  {
+    ...
+    "fontFace": "Cascadia Code PL",
+    ...
+  }
   ```
 - 파일을 저장하고 새 탭을 띄웠을 때 잘 열리는지 확인합니다.
 
 ## 터미널 Theme 설정하기
-Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula은 아래와 같이 설정하면 됩니다.
+
+Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula은 아래와 같이 설정합니다.
 
 ```
   "profiles":
@@ -85,3 +90,6 @@ Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대�
   }],
 
 ```
+
+다른 종류의 테마는 [Windows Terminal Themes](https://atomcorp.github.io/themes/) 와 같은 곳에서 쉽게 찾아볼 수 있습니다.
+

@@ -16,6 +16,8 @@ Start-Process 'https://aka.ms/terminal'
 
 ## WSL, HCS 옵션 켜기
 
+**NOTE: 윈도우, 리눅스, 맥, 그리고 퍼블릭 클라우드 환경에서 가상 컴퓨터 안에서 WSL을 사용하려고 Windows 10이나 Windows Server 2019 이상의 OS를 설치한 경우, 사용하는 가상 컴퓨터가 중첩 가상화 기능을 제공하는지 확인한 다음 이 단계를 따라하세요. 중첩 가상화가 작동하지 않는 가상 컴퓨터 상에 설치된 Windows 10에서는 WSL v1만 사용할 수 있습니다.**
+
 WSL 1과 2를 모두 사용하려면 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요. 컴퓨터가 재부팅될 수 있습니다.
 
 ```powershell

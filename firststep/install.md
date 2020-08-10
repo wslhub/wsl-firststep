@@ -9,7 +9,7 @@ WSL 2를 사용하면서 기존의 내장 터미널을 사용해도 문제 없�
 PowerShell을 열고 아래 명령어를 붙여넣으세요.
 
 ```powershell
-Start-Process https://www.microsoft.com/store/apps/9n0dx20hk701
+Start-Process 'https://aka.ms/terminal'
 ```
 
 그러면 Windows Terminal을 설치할 수 있는 스토어 페이지로 접근할 수 있고, 바로 설치를 시작할 수 있습니다.

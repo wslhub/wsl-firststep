@@ -42,25 +42,41 @@ chsh -s $(which zsh)
 
 ```bash
 sudo apt -y install language-pack-ko
-```
 
-## EUC-KR 로캘 만들고 기본 로캘을 한국어 UTF-8로 변경하기
-
-```bash
 sudo locale-gen ko_KR.EUC-KR
 sudo update-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
-```
 
-## 한국어 글꼴 설치하기
-
-```bash
 sudo apt -y install fonts-unfonts-core fonts-unfonts-extra fonts-nanum fonts-nanum-coding fonts-nanum-eco fonts-nanum-extra fonts-noto-cjk
 ```
-
-## 로그아웃
 
 위의 모든 설정이 반영되려면 로그아웃하고 다시 WSL에 들어와야 합니다.
 
 ```bash
 logout
 ```
+
+## Fuzzy Search 추가하기
+
+터미널을 사용하면서 많이 사용하는 기능 중에 전에 입력했던 명령어를 다시 실행하는 기능을 많이 사용합니다. 그 외에도 파일 이름 등을 자동 완성하기 위하여 일부분만 입력하고 Tab 키를 누르는 기능도 많이 사용합니다.
+
+이처럼 텍스트 검색을 할 때 완전히 동일한 시작 순서와 문자를 입력하지 않아도 적절하게 검색 결과를 찾아 제안하는 Fuzzy Search 기능이 개발자들 사이에서 많이 사용됩니다. Fuzzy Search를 사용하기 위해서는 fzf 라는 도구를 설치하여 사용해야 합니다.
+
+1. 다음의 명령어를 입력합니다.
+
+    ```bash
+    sudo apt -y install git
+
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ```
+
+2. 설치가 끝나면, 현재 사용 중인 셸과 연동하기 위하여 아래 명령어를 입력합니다.
+
+    ```bash
+    ~/.fzf/install
+    ```
+
+3. 몇 가지 질문에 모두 `Y` 키를 눌러 답을 합니다.
+
+4. 변경된 터미널 설정이 반영될 수 있도록, 현재 사용 중인 터미널 창을 닫았다가 새 창을 엽니다.
+
+5. 설치가 끝난 후, 잘 설치가 되었는지 확인하기 위하여 `Ctrl` 키를 누른채로 `R` 키를 누릅니다. 그러면 다음과 같이 fzf가 입력했던 명령어들을 검색하고 후보를 추천해주는 기능이 잘 작동하는 것을 알 수 있습니다.

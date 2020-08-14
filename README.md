@@ -12,6 +12,7 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 - [Docker 설치하기](firststep/docker.md)
 - [Visual Studio Code](firststep/vscode.md)
 - [SSH 키 설정하기](firststep/sshkey.md)
+- [환경 격차 줄이기[(firststep/bridge.md)
 
 ## 프로그래밍 언어 별 개발 환경 설정하기
 

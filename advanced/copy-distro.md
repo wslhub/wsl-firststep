@@ -121,7 +121,7 @@ wsl.exe --distribution 'MyUbuntu' --user root -- cat /etc/wsl.conf
 
 이 때에는 해당 파일의 설정이 더 우선시되므로, 파일을 삭제하거나 해당되는 설정을 제거하여 저장합니다.
 
-그 다음 아래 명령어를 사용하여 WSL 전체를 Shutdown하고 다시 해당 배포판을 시작합니다. 이렇게 하는 이유는, `/etc/wsl.conf`의 설정은 레지스트리와는 별개로 WSL의 코어 시스템인 LxssManager에 직접 적용되는 설정이고, 해당 서비스를 다시 시작하기 전까지는 설정이 유지되기 때문입니다.
+그 다음 아래 명령어를 사용하여 WSL 전체를 Shutdown하고 다시 해당 배포판을 시작합니다. 이렇게 하는 이유는, `/etc/wsl.conf`의 설정은 레지스트리와는 별개로 WSL의 코어 시스템인 `LxssManager`에 직접 적용되는 설정이고, 해당 서비스를 다시 시작하기 전까지는 설정이 유지되기 때문입니다.
 
 ```poweshell
 wsl.exe --shutdown

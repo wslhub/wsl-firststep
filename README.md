@@ -20,6 +20,10 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 - [닷넷 코어 또는 모노 설치하기](devsetup/dotnet.md)
 - [Golang 설치하기](devsetup/golang.md)
 
+## 고급 가이드
+
+- [WSL 2 배포판 복사하기](advanced/copy-distro.md)
+
 ---
 
 WSL에 관한 여러가지 정보를 공유하고 질문 답변을 할 수 있는 커뮤니티를 찾고 계신가요? 한국 WSL 사용자 그룹으로 오세요!

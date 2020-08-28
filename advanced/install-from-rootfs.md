@@ -49,3 +49,15 @@ wsl.exe --import <DistributionName> <InstallLocation> <FileName> --version <1|2>
 Invoke-WebRequest -UseBasicParsing -Uri 'https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64-wsl.rootfs.tar.gz' -OutFile 'ubuntu.tar.gz'
 wsl.exe --import MyUbuntu C:\Distro\MyUbuntu ubuntu.tar.gz --version 2
 ```
+
+백업 파일의 크기, 디스크 입출력 속도, 그리고 WSL 버전에 따라 차이가 있을 수 있으며, 시간이 오래 걸리는 작업이므로 완료될 때까지 기다립니다.
+
+또한 추가 디스크 공간이 필요하므로, 디스크 공간이 여유가 없을 경우 별도의 외부 저장 장치를 사용하여 복원을 진행하는 것을 권장합니다.
+
+정상적으로 복원되었는지 확인하기 위하여 목록 확인 명령어를 실행해보겠습니다.
+
+```powershell
+wsl.exe --list --verbose
+```
+
+MyUbuntu 라는 항목의 버전이 2로 표시된다면 정상적으로 복원된 것입니다.

@@ -26,6 +26,7 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 
 ## 고급 가이드
 
+- [RootFS로부터 Ubuntu 설치하기](advanced/install-from-rootfs.md)
 - [WSL 2 배포판 복사하기](advanced/copy-distro.md)
 
 ---

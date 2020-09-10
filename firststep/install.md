@@ -45,6 +45,30 @@ If ((Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform, 
 wsl --set-default-version 2
 ```
 
+## WSL 2용 최신 리눅스 커널 업데이트하기
+
+WSL 2를 실행하려면 마이크로소프트가 배포하는 최신 버전의 리눅스 커널 패키지를 설치해야 합니다. 이 커널 패키지는 HCS 위에서 실행되는 WSL 2를 위한 전용 리눅스 커널입니다.
+
+x64 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.
+
+```powershell
+Set-Location -Path $env:USERPROFILE\Downloads
+$TargetUri = "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi"
+Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_x64.msi
+.\wsl_update_x64.msi
+```
+
+Surface Pro X처럼 ARM 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.
+
+```powershell
+Set-Location -Path $env:USERPROFILE\Downloads
+$TargetUri = "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi"
+Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_arm64.msi
+.\wsl_update_arm64.msi
+```
+
+> NOTE: 2020년 9월 현재 배포되는 MSI 패키지는 msiexec.exe를 사용하여 MSI 패키지를 설치하는 것이 지원되지 않아서 커맨드라인으로 리눅스 커널 패키지 설치를 자동/무인 설치 방식으로 진행하는 것에 제한이 있는 상태입니다.
+
 ## Ubuntu 20.04 설치하기
 
 WSL용 리눅스를 설치하는 방법은 스토어를 이용하는 방법과 직접 설치를 하는 방법이 있습니다. 스토어를 이용하면 설치와 관리가 간편하지만 스토어 앱을 초기화할 경우 WSL 설정이 날아가는 문제가 생길 수 있어 수동으로 설치하는 방법을 추천합니다.

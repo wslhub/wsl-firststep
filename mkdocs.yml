@@ -11,6 +11,10 @@ theme:
 plugins:
   - search:
       prebuild_index: true
+extra:
+  disqus: wsl-firststep
+markdown_extensions:
+  - meta
 nav:
   - 홈:
     - index.md

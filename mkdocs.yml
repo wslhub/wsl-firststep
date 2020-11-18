@@ -1,0 +1,33 @@
+site_name: "WSL 시작하기"
+theme:
+  name: material
+  language: kr
+  logo: images/favicon.png
+  favicon: images/favicon.png
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - search.suggest
+plugins:
+  - search:
+      prebuild_index: true
+nav:
+  - 홈:
+    - index.md
+  - 처음에 할 일:
+    - firststep/install.md
+    - firststep/ubuntu.md
+    - firststep/winterm.md
+    - firststep/docker.md
+    - firststep/vscode.md
+    - firststep/sshkey.md
+    - firststep/bridge.md
+  - 개발 환경 설정하기:
+    - devsetup/openjdk.md
+    - devsetup/dotnet.md
+    - devsetup/golang.md
+    - devsetup/multiplexer.md
+  - 고급 가이드:
+    - advanced/install-from-rootfs.md
+    - advanced/copy-distro.md
+  - WSLHUB: https://www.wslhub.com/

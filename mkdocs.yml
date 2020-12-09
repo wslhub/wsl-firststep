@@ -35,5 +35,5 @@ nav:
     - advanced/install-from-rootfs.md
     - advanced/copy-distro.md
   - 문제 해결:
-    - firststep/timesync.md
+    - troubleshoot/timesync.md
   - WSLHUB: https://www.wslhub.com/

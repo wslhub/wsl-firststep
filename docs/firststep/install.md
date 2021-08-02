@@ -86,7 +86,33 @@ Start-Process 'https://aka.ms/terminal'
 
 그러면 Windows Terminal을 설치할 수 있는 스토어 페이지로 접근할 수 있고, 바로 설치를 시작할 수 있습니다.
 
-## WSL, HCS 옵션 켜기
+## 자동 설치
+
+위의 지원되는 윈도우 버전 확인하기 표에서 **커맨드라인을 통한 설치 지원**을 사용할 수 있는 OS에 해당하는 경우, 다음의 명령어를 PowerShell에서 실행하면 간편하게 설치할 수 있습니다. 아래 명령어로 WSL 2 실행에 필요한 구성 요소 (가상 머신 플랫폼, WSL 2 전용 커널)를 한 번에 설치합니다.
+
+```powershell
+wsl.exe --install
+```
+
+컴퓨터 재시작이 필요하다는 안내가 나올 경우 안내에 따라 재시작하도록 합니다. WSL 설치가 완료된 후에는 다음의 명령어를 실행하여 커맨드라인으로 설치할 수 있는 배포판의 종류를 확인합니다.
+
+```powershell
+wsl.exe --list --online
+```
+
+원하는 배포판을 찾으면, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-20.04`를 설치한다고 가정하겠습니다.
+
+```powershell
+wsl.exe --install -d Ubuntu-20.04
+```
+
+설치가 끝나면 자동으로 새 배포판이 실행되어 초기화 과정이 실행됩니다.
+
+Windows Terminal에는 자동으로 새 항목이 등록됩니다.
+
+## 수동 설치
+
+### WSL, HCS 옵션 켜기
 
 **NOTE: 윈도우, 리눅스, 맥, 그리고 퍼블릭 클라우드 환경에서 가상 컴퓨터 안에서 WSL을 사용하려고 Windows 10이나 Windows Server 2019 이상의 OS를 설치한 경우, 사용하는 가상 컴퓨터가 중첩 가상화 기능을 제공하는지 확인한 다음 이 단계를 따라하세요. 중첩 가상화가 작동하지 않는 가상 컴퓨터 상에 설치된 Windows 10에서는 WSL v1만 사용할 수 있습니다.**
 
@@ -102,7 +128,7 @@ If ((Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform, 
 wsl --set-default-version 2
 ```
 
-## WSL 2용 최신 리눅스 커널 업데이트하기
+### WSL 2용 최신 리눅스 커널 업데이트하기
 
 WSL 2를 실행하려면 마이크로소프트가 배포하는 최신 버전의 리눅스 커널 패키지를 설치해야 합니다. 이 커널 패키지는 HCS 위에서 실행되는 WSL 2를 위한 전용 리눅스 커널입니다.
 
@@ -126,7 +152,7 @@ Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_arm64.msi
 
 > NOTE: 2020년 9월 현재 배포되는 MSI 패키지는 msiexec.exe를 사용하여 MSI 패키지를 설치하는 것이 지원되지 않아서 커맨드라인으로 리눅스 커널 패키지 설치를 자동/무인 설치 방식으로 진행하는 것에 제한이 있는 상태입니다.
 
-## Ubuntu 20.04 설치하기
+### Ubuntu 20.04 설치하기
 
 WSL용 리눅스를 설치하는 방법은 스토어를 이용하는 방법과 직접 설치를 하는 방법이 있습니다. 스토어를 이용하면 설치와 관리가 간편하지만 스토어 앱을 초기화할 경우 WSL 설정이 날아가는 문제가 생길 수 있어 수동으로 설치하는 방법을 추천합니다.
 
@@ -147,7 +173,7 @@ Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
 
 만약에 Ubuntu 20.04 대신 다른 배포판을 설치하고 싶다면, 아래 부록을 참고하세요.
 
-## 다른 리눅스 패키지 찾아보기
+### 다른 리눅스 패키지 찾아보기
 
 - Ubuntu 18.04: https://aka.ms/wsl-ubuntu-1804
 - Ubuntu 16.04: https://aka.ms/wsl-ubuntu-1604

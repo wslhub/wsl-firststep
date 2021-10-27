@@ -63,17 +63,17 @@ logout
 
 1. 다음의 명령어를 입력합니다.
 
-    ```bash
-    sudo apt -y install git
+```bash
+sudo apt -y install git
 
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ```
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+```
 
 2. 설치가 끝나면, 현재 사용 중인 셸과 연동하기 위하여 아래 명령어를 입력합니다.
 
-    ```bash
-    ~/.fzf/install
-    ```
+```bash
+~/.fzf/install
+```
 
 3. 몇 가지 질문에 모두 `Y` 키를 눌러 답을 합니다.
 

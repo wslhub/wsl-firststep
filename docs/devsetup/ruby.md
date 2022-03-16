@@ -66,6 +66,7 @@ Ruby 개발 환경을 설치하는 방법은 크게 4가지가 있습니다.
 
     ```bash
     echo -e ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
+    ```
 
 1. Ruby를 사용할 수 있도록 [asdf-ruby](https://github.com/asdf-vm/asdf-ruby) 플러그인을 추가합니다.
 
@@ -77,8 +78,11 @@ Ruby 개발 환경을 설치하는 방법은 크게 4가지가 있습니다.
 
     ```bash
     asdf list ruby
-    # 설치할 수 있는 Ruby 버전을 보여줍니다
+    ```
 
+    위의 명령어를 실행했을 때 나타나는 버전 목록 중 원하는 버전을 선택합니다. 여기서는 3.0.2 버전을 사용하여 설치한다고 가정하겠습니다.
+
+    ```bash
     asdf install ruby 3.0.2
     ```
 

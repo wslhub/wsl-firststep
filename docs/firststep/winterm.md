@@ -56,7 +56,7 @@ Oh-my-zsh 등에서 사용하는 꾸밈 폰트가 잘 적용될 수 있도록 Po
 
 Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula은 아래와 같이 설정합니다.
 
-```
+```json
   "profiles":
   {
     "defaults": {
@@ -90,8 +90,6 @@ Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대�
     "white": "#F8F8F2",
     "yellow": "#F1FA8C"
   }],
-
 ```
 
 다른 종류의 테마는 [Windows Terminal Themes](https://atomcorp.github.io/themes/) 와 같은 곳에서 쉽게 찾아볼 수 있습니다.
-

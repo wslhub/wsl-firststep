@@ -15,6 +15,7 @@ extra:
   disqus: wsl-firststep
 markdown_extensions:
   - meta
+  - footnotes
 nav:
   - 홈:
     - index.md
@@ -26,10 +27,12 @@ nav:
     - firststep/vscode.md
     - firststep/sshkey.md
     - firststep/bridge.md
+    - firststep/networkdrive.md
   - 개발 환경 설정하기:
     - devsetup/openjdk.md
     - devsetup/dotnet.md
     - devsetup/golang.md
+    - devsetup/ruby.md
     - devsetup/multiplexer.md
   - 고급 가이드:
     - advanced/install-from-rootfs.md

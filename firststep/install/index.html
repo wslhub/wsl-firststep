@@ -1,0 +1,1414 @@
+
+<!doctype html>
+<html lang="kr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.6">
+    
+    
+      
+        <title>커맨드라인으로 WSL v2 설치하기 - WSL 시작하기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9d5733d3.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wsl-v2" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="WSL 시작하기" class="md-header__button md-logo" aria-label="WSL 시작하기" data-md-component="logo">
+      
+  <img src="../../images/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            WSL 시작하기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              커맨드라인으로 WSL v2 설치하기
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="지우기" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        홈
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="./" class="md-tabs__link md-tabs__link--active">
+        처음에 할 일
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../devsetup/openjdk/" class="md-tabs__link">
+        개발 환경 설정하기
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../advanced/install-from-rootfs/" class="md-tabs__link">
+        고급 가이드
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../troubleshoot/timesync/" class="md-tabs__link">
+        문제 해결
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="https://www.wslhub.com/" class="md-tabs__link">
+      WSLHUB
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="WSL 시작하기" class="md-nav__button md-logo" aria-label="WSL 시작하기" data-md-component="logo">
+      
+  <img src="../../images/favicon.png" alt="logo">
+
+    </a>
+    WSL 시작하기
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          홈
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="홈" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          홈
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        WSL 시작하기
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          처음에 할 일
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="처음에 할 일" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          처음에 할 일
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          커맨드라인으로 WSL v2 설치하기
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        커맨드라인으로 WSL v2 설치하기
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    프로세서 아키텍처 확인하기
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    지원되는 윈도우 버전 확인하기
+  </a>
+  
+    <nav class="md-nav" aria-label="지원되는 윈도우 버전 확인하기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    32비트 인텔 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64" class="md-nav__link">
+    64비트 인텔 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-arm" class="md-nav__link">
+    32비트 ARM 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-arm" class="md-nav__link">
+    64비트 ARM 프로세서
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#windows-terminal" class="md-nav__link">
+    Windows Terminal 설치하기
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    자동 설치
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    수동 설치
+  </a>
+  
+    <nav class="md-nav" aria-label="수동 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wsl-hcs" class="md-nav__link">
+    WSL, HCS 옵션 켜기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wsl-v2_1" class="md-nav__link">
+    WSL v2용 최신 리눅스 커널 업데이트하기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-2004" class="md-nav__link">
+    Ubuntu 20.04 설치하기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    다른 리눅스 패키지 찾아보기
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ubuntu/" class="md-nav__link">
+        Ubuntu 설치 후에 처음 할 일
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../winterm/" class="md-nav__link">
+        Windows Terminal 설정하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docker/" class="md-nav__link">
+        Docker 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vscode/" class="md-nav__link">
+        Visual Studio Code 설정하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sshkey/" class="md-nav__link">
+        SSH 키 생성하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bridge/" class="md-nav__link">
+        리눅스 환경과 격차 줄이기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../networkdrive/" class="md-nav__link">
+        Windows 파일탐색기로 WSL 파일시스템 확인하는 방법
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          개발 환경 설정하기
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="개발 환경 설정하기" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          개발 환경 설정하기
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devsetup/openjdk/" class="md-nav__link">
+        OpenJDK 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devsetup/dotnet/" class="md-nav__link">
+        닷넷 개발 환경 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devsetup/golang/" class="md-nav__link">
+        Go 개발 환경 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devsetup/ruby/" class="md-nav__link">
+        Ruby 개발 환경 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devsetup/multiplexer/" class="md-nav__link">
+        Windows Terminal 멀티플렉서 단축키 모음
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          고급 가이드
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="고급 가이드" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          고급 가이드
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/install-from-rootfs/" class="md-nav__link">
+        RootFS 아카이브로부터 Ubuntu 설치하기
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/copy-distro/" class="md-nav__link">
+        WSL 배포판 복사하기
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          문제 해결
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="문제 해결" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          문제 해결
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshoot/timesync/" class="md-nav__link">
+        WSL 2 시간 동기화 문제 임시방편 조치하기
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://www.wslhub.com/" class="md-nav__link">
+        WSLHUB
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    프로세서 아키텍처 확인하기
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    지원되는 윈도우 버전 확인하기
+  </a>
+  
+    <nav class="md-nav" aria-label="지원되는 윈도우 버전 확인하기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    32비트 인텔 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64" class="md-nav__link">
+    64비트 인텔 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-arm" class="md-nav__link">
+    32비트 ARM 프로세서
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-arm" class="md-nav__link">
+    64비트 ARM 프로세서
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#windows-terminal" class="md-nav__link">
+    Windows Terminal 설치하기
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    자동 설치
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    수동 설치
+  </a>
+  
+    <nav class="md-nav" aria-label="수동 설치">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wsl-hcs" class="md-nav__link">
+    WSL, HCS 옵션 켜기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wsl-v2_1" class="md-nav__link">
+    WSL v2용 최신 리눅스 커널 업데이트하기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-2004" class="md-nav__link">
+    Ubuntu 20.04 설치하기
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    다른 리눅스 패키지 찾아보기
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="wsl-v2">커맨드라인으로 WSL v2 설치하기</h1>
+<p>커맨드라인으로 WSL v2를 설치하면 간단하고 빠르게 WSL v2를 시작할 수 있습니다.</p>
+<h2 id="_1">프로세서 아키텍처 확인하기</h2>
+<p>내가 사용하는 컴퓨터의 프로세서의 종류와 지원 범위를 확인해야 합니다.</p>
+<table>
+<thead>
+<tr>
+<th>CPU 종류</th>
+<th>아키텍처</th>
+<th>WSL v1</th>
+<th>WSL v2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>인텔 프로세서</td>
+<td>32비트 전용</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>인텔 프로세서</td>
+<td>64비트 지원</td>
+<td>O</td>
+<td>O<sup id="fnref:A"><a class="footnote-ref" href="#fn:A">1</a></sup></td>
+</tr>
+<tr>
+<td>ARM 프로세서</td>
+<td>32비트 전용</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ARM 프로세서</td>
+<td>64비트 지원</td>
+<td>O</td>
+<td>O<sup id="fnref:B"><a class="footnote-ref" href="#fn:B">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">지원되는 윈도우 버전 확인하기</h2>
+<p>내가 실행하는 윈도우 10 버전이 정확히 어떻게 되는지 확인하려면 PowerShell에서 다음과 같이 실행합니다.</p>
+<pre><code class="language-powershell">cmd.exe /c ver
+</code></pre>
+<h3 id="32">32비트 인텔 프로세서</h3>
+<p>32비트 인텔 프로세서에서는 WSL v1, v2 모두 지원되지 않습니다.</p>
+<h3 id="64">64비트 인텔 프로세서</h3>
+<table>
+<thead>
+<tr>
+<th>OS 버전</th>
+<th>실행 가능한 WSL 버전</th>
+<th>WSL v2 필요 조건</th>
+<th>커맨드라인을 통한 설치 지원<sup id="fnref:G"><a class="footnote-ref" href="#fn:G">7</a></sup></th>
+<th>WSLg 지원</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.0.10240</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.10586</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.14393</td>
+<td>레거시 WSL<sup id="fnref3:C"><a class="footnote-ref" href="#fn:C">3</a></sup></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.14393</td>
+<td>레거시 WSL<sup id="fnref2:C"><a class="footnote-ref" href="#fn:C">3</a></sup></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.15063</td>
+<td>레거시 WSL<sup id="fnref:C"><a class="footnote-ref" href="#fn:C">3</a></sup></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.16299</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.17134</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.17763</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.18362</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트<sup id="fnref2:D"><a class="footnote-ref" href="#fn:D">4</a></sup></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.18363</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트<sup id="fnref:D"><a class="footnote-ref" href="#fn:D">4</a></sup></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19041</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트<sup id="fnref3:E"><a class="footnote-ref" href="#fn:E">5</a></sup></td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19042</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트<sup id="fnref2:E"><a class="footnote-ref" href="#fn:E">5</a></sup></td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19043</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트<sup id="fnref:E"><a class="footnote-ref" href="#fn:E">5</a></sup></td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19044</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.20348</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화 <sup id="fnref:F"><a class="footnote-ref" href="#fn:F">6</a></sup></td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.22000</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화</td>
+<td>O</td>
+<td>O</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-arm">32비트 ARM 프로세서</h3>
+<p>32비트 프로세서에서는 WSL v1, v2 모두 지원되지 않습니다.</p>
+<h3 id="64-arm">64비트 ARM 프로세서</h3>
+<table>
+<thead>
+<tr>
+<th>OS 버전</th>
+<th>실행 가능한 WSL 버전</th>
+<th>WSL v2 필요 조건</th>
+<th>커맨드라인을 통한 설치 지원</th>
+<th>WSLg 지원</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.0.17134</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.17763</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.18362</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.18363</td>
+<td>WSL v1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19041</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19042</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19043</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.19044</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화, 최신 업데이트</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>10.0.22000</td>
+<td>WSL v1, WSL v2</td>
+<td>CPU 가상화</td>
+<td>O</td>
+<td>O</td>
+</tr>
+</tbody>
+</table>
+<h2 id="windows-terminal">Windows Terminal 설치하기</h2>
+<p>WSL v2를 사용하면서 기존의 내장 터미널을 사용해도 문제 없지만, 좀 더 풍부하고 다양한 기능을 사용하려면 Windows Terminal을 설치해서 사용하는 것이 좋습니다.</p>
+<p>PowerShell을 열고 아래 명령어를 붙여넣으세요.</p>
+<pre><code class="language-powershell">Start-Process 'https://aka.ms/terminal'
+</code></pre>
+<p>그러면 Windows Terminal을 설치할 수 있는 스토어 페이지로 접근할 수 있고, 바로 설치를 시작할 수 있습니다.</p>
+<h2 id="_3">자동 설치</h2>
+<p>위의 지원되는 윈도우 버전 확인하기 표에서 <strong>커맨드라인을 통한 설치 지원</strong>을 사용할 수 있는 OS에 해당하는 경우, 다음의 명령어를 PowerShell에서 실행하면 간편하게 설치할 수 있습니다. 아래 명령어로 WSL v2 실행에 필요한 구성 요소 (가상 머신 플랫폼, WSL v2 전용 커널)를 한 번에 설치합니다.</p>
+<pre><code class="language-powershell">wsl.exe --install
+</code></pre>
+<p>컴퓨터 재시작이 필요하다는 안내가 나올 경우 안내에 따라 재시작하도록 합니다. WSL 설치가 완료된 후에는 다음의 명령어를 실행하여 커맨드라인으로 설치할 수 있는 배포판의 종류를 확인합니다.</p>
+<pre><code class="language-powershell">wsl.exe --list --online
+</code></pre>
+<p>원하는 배포판을 찾으면, 다음과 같이 명령어를 입력합니다. 여기서는 <code>Ubuntu-20.04</code>를 설치한다고 가정하겠습니다.</p>
+<pre><code class="language-powershell">wsl.exe --install -d Ubuntu-20.04
+</code></pre>
+<p>설치가 끝나면 자동으로 새 배포판이 실행되어 초기화 과정이 실행됩니다.</p>
+<p>Windows Terminal에는 자동으로 새 항목이 등록됩니다.</p>
+<h2 id="_4">수동 설치</h2>
+<h3 id="wsl-hcs">WSL, HCS 옵션 켜기</h3>
+<p><strong>NOTE: 윈도우, 리눅스, 맥, 그리고 퍼블릭 클라우드 환경에서 가상 컴퓨터 안에서 WSL을 사용하려고 Windows 10이나 Windows Server 2019 이상의 OS를 설치한 경우, 사용하는 가상 컴퓨터가 중첩 가상화 기능을 제공하는지 확인한 다음 이 단계를 따라하세요. 중첩 가상화가 작동하지 않는 가상 컴퓨터 상에 설치된 Windows 10에서는 WSL v1만 사용할 수 있습니다.</strong></p>
+<p>WSL v1과 v2를 모두 사용하려면 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요. 컴퓨터가 재부팅될 수 있습니다.</p>
+<pre><code class="language-powershell">If ((Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform, Microsoft-Windows-Subsystem-Linux).RestartNeeded) { Restart-Computer -Force }
+</code></pre>
+<p>설치가 끝난 다음에는 아래 명령어를 붙여넣으세요. 재부팅이 되었다면 다시 한 번 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요.</p>
+<pre><code class="language-powershell">wsl --set-default-version 2
+</code></pre>
+<h3 id="wsl-v2_1">WSL v2용 최신 리눅스 커널 업데이트하기</h3>
+<p>WSL v2를 실행하려면 마이크로소프트가 배포하는 최신 버전의 리눅스 커널 패키지를 설치해야 합니다. 이 커널 패키지는 HCS 위에서 실행되는 WSL v2를 위한 전용 리눅스 커널입니다.</p>
+<p>x64 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.</p>
+<pre><code class="language-powershell">Set-Location -Path $env:USERPROFILE\Downloads
+$TargetUri = &quot;https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi&quot;
+Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_x64.msi
+.\wsl_update_x64.msi
+</code></pre>
+<p>Surface Pro X처럼 ARM 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.</p>
+<pre><code class="language-powershell">Set-Location -Path $env:USERPROFILE\Downloads
+$TargetUri = &quot;https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi&quot;
+Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_arm64.msi
+.\wsl_update_arm64.msi
+</code></pre>
+<blockquote>
+<p>NOTE: 2020년 9월 현재 배포되는 MSI 패키지는 msiexec.exe를 사용하여 MSI 패키지를 설치하는 것이 지원되지 않아서 커맨드라인으로 리눅스 커널 패키지 설치를 자동/무인 설치 방식으로 진행하는 것에 제한이 있는 상태입니다.</p>
+</blockquote>
+<h3 id="ubuntu-2004">Ubuntu 20.04 설치하기</h3>
+<p>WSL용 리눅스를 설치하는 방법은 스토어를 이용하는 방법과 직접 설치를 하는 방법이 있습니다. 스토어를 이용하면 설치와 관리가 간편하지만 스토어 앱을 초기화할 경우 WSL 설정이 날아가는 문제가 생길 수 있어 수동으로 설치하는 방법을 추천합니다.</p>
+<p>PowerShell을 열고 아래 명령어를 붙여 넣습니다.</p>
+<pre><code class="language-powershell">Set-Location -Path $env:USERPROFILE\Downloads
+$TargetUri = &quot;https://aka.ms/wslubuntu2004&quot;
+Invoke-WebRequest -Uri $TargetUri -OutFile .\ubuntu.zip
+New-Item -Type Container -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
+Expand-Archive -Path .\ubuntu.zip -DestinationPath $env:SYSTEMDRIVE\Distro\Ubuntu2004
+Remove-Item -Path .\ubuntu.zip
+Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
+.\ubuntu2004.exe
+</code></pre>
+<p>설치를 끝내고나면 Windows Terminal에는 자동으로 새 항목이 등록됩니다.</p>
+<p>만약에 Ubuntu 20.04 대신 다른 배포판을 설치하고 싶다면, 아래 부록을 참고하세요.</p>
+<h3 id="_5">다른 리눅스 패키지 찾아보기</h3>
+<p>amd64 지원 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.</p>
+<ul>
+<li><a href="https://aka.ms/wslubuntu">Ubuntu 최신 버전</a></li>
+<li><a href="https://aka.ms/wslubuntu2004">Ubuntu 20.04</a></li>
+<li><a href="https://aka.ms/wsl-ubuntu-1804">Ubuntu 18.04</a></li>
+<li><a href="https://aka.ms/wsl-ubuntu-1604">Ubuntu 16.04</a></li>
+<li><a href="https://aka.ms/wsl-debian-gnulinux">Debian GNU/Linux</a></li>
+<li><a href="https://aka.ms/wsl-kali-linux-new">Kali Linux</a></li>
+<li><a href="https://aka.ms/wsl-sles-12">SUSE Linux Enterprise Server 12</a></li>
+<li><a href="https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP2">SUSE Linux Enterprise Server 15 SP2</a></li>
+<li><a href="https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP3">SUSE Linux Enterprise Server 15 SP3</a></li>
+<li><a href="https://aka.ms/wsl-opensuse-tumbleweed">openSUSE Tumbleweed</a></li>
+<li><a href="https://aka.ms/wsl-opensuseleap15-3">openSUSE Leap 15.3</a></li>
+<li><a href="https://aka.ms/wsl-opensuseleap15-2">openSUSE Leap 15.2</a></li>
+<li><a href="https://aka.ms/wsl-oraclelinux-8-5">Oracle Linux 8.5</a></li>
+<li><a href="https://aka.ms/wsl-oraclelinux-7-9">Oracle Linux 7.9</a></li>
+<li><a href="https://github.com/WhitewaterFoundry/WSLFedoraRemix/releases/">Fedora Remix for WSL</a></li>
+</ul>
+<p>arm64 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.</p>
+<ul>
+<li><a href="https://aka.ms/wslubuntu2004arm">Ubuntu 20.04 ARM</a></li>
+<li><a href="https://aka.ms/wsl-ubuntu-1804-arm">Ubuntu 18.04 ARM</a></li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:A">
+<p>CPU 가상화 기술이 지원되어야 합니다. 만약 가상 컴퓨터에서 윈도우 10 또는 윈도우 11을 실행 중인 경우, 중첩 가상화 기능이 설정된 인스턴스에서만 WSL v2를 실행할 수 있습니다. 다만 일부 반기 채널 버전이나 프리뷰 버전을 제외하고 2022년 현재 윈도우 서버에서는 WSL v1만 사용 가능합니다.&#160;<a class="footnote-backref" href="#fnref:A" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:B">
+<p>윈도우 10 버전 2004 (10.0.19041) 이상의 OS가 필요합니다.&#160;<a class="footnote-backref" href="#fnref:B" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:C">
+<p>레거시 WSL은 WSL v1 이전에 나온 Bash on Ubuntu on Windows를 말하며, WSL v1으로 업그레이드가 필요합니다.&#160;<a class="footnote-backref" href="#fnref:C" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:C" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:C" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:D">
+<p><a href="https://www.catalog.update.microsoft.com/Search.aspx?q=KB4566116">KB4566116</a> 핫픽스를 설치해야 WSL v2를 사용할 수 있습니다. 특별한 경우가 아니라면, 윈도우 업데이트를 이용하여 모든 업데이트를 설치하면 간편하게 적용이 가능합니다.&#160;<a class="footnote-backref" href="#fnref:D" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:D" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:E">
+<p><a href="https://www.catalog.update.microsoft.com/Search.aspx?q=KB5004296">KB5004296</a> 핫픽스를 설치해야 WSL v2를 사용할 수 있습니다. 특별한 경우가 아니라면, 윈도우 업데이트를 이용하여 모든 업데이트를 설치하면 간편하게 적용이 가능합니다.&#160;<a class="footnote-backref" href="#fnref:E" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:E" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:E" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:F">
+<p>일부 반기 채널 버전이나 프리뷰 버전을 제외하고, 윈도우 서버 2022의 경우 <a href="https://www.catalog.update.microsoft.com/Search.aspx?q=KB5014021">KB5014021</a> 및 연관되는 업데이트를 설치하면 사용 가능합니다. <a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/wsl2-now-available-on-windows-server-2022/ba-p/3447570">자세한 내용 보기</a> 단, 현재 WSLg는 사용할 수 없으며, 서버 코어 모드의 경우 <code>--install</code> 스위치를 통한 설치가 불가능할 수 있습니다.&#160;<a class="footnote-backref" href="#fnref:F" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:G">
+<p><code>--install</code> 스위치를 이용하여 한 번에 설치할 수 있는 방식을 말합니다.&#160;<a class="footnote-backref" href="#fnref:G" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="이전: WSL 시작하기" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              WSL 시작하기
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../ubuntu/" class="md-footer__link md-footer__link--next" aria-label="다음: Ubuntu 설치 후에 처음 할 일" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              Ubuntu 설치 후에 처음 할 일
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "search.suggest"], "translations": {"clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "search.config.lang": "en", "search.config.pipeline": " ", "search.config.separator": "[\\s\\-]+", "search.placeholder": "\uac80\uc0c9", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version.title": "\ubc84\uc804 \uc120\ud0dd"}, "search": "../../assets/javascripts/workers/search.5e67fbfe.min.js"}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e87a5f81.min.js"></script>
+      
+    
+  </body>
+</html>

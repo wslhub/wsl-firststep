@@ -54,7 +54,7 @@ Oh-my-zsh 등에서 사용하는 꾸밈 폰트가 잘 적용될 수 있도록 Po
 
 ## 터미널 Theme 설정하기
 
-Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula은 아래와 같이 설정합니다.
+Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대표적인 Theme인 Dracula는 아래와 같이 설정합니다.
 
 ```json
   "profiles":

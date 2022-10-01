@@ -113,7 +113,7 @@ Get-ItemProperty Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentV
 
 ### 트러블슈팅
 
-만약 기본 사용자 변경이 제대로 동작하지 않는다면, `root` 사용자 계정 앞으로 `/etc/wsl.conf` 파일에 기본 사용자 설정이 들어가있기 때문일 수 있습니다. 다음의 명령어를 실행하여 `[user]` 섹션과 함께 `default=` 설정이 들어있는지 확인합니다.
+만약 기본 사용자 변경이 제대로 동작하지 않는다면, `root` 사용자 계정 앞으로 `/etc/wsl.conf` 파일에 기본 사용자 설정이 들어가 있기 때문일 수 있습니다. 다음의 명령어를 실행하여 `[user]` 섹션과 함께 `default=` 설정이 들어있는지 확인합니다.
 
 ```powershell
 wsl.exe --distribution 'MyUbuntu' --user root -- cat /etc/wsl.conf

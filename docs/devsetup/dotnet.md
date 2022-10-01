@@ -46,7 +46,7 @@
    lsb_release -a
    ```
 
-1. 아래 명령어에서 `stable-focal` 부분을 지금 사용하는 버전과 일치하도록 수정한 후 실행합니다. 예를 들어 `bionic`이 코드명으로 나온 경우 `stable-bionic` 처럼 고쳐씁니다. 여기서는 `stable-focal`로 가정하고 실행하곘습니다.
+1. 아래 명령어에서 `stable-focal` 부분을 지금 사용하는 버전과 일치하도록 수정한 후 실행합니다. 예를 들어 `bionic`이 코드명으로 나온 경우 `stable-bionic` 처럼 고쳐씁니다. 여기서는 `stable-focal`로 가정하고 실행하겠습니다.
 
    ```bash
    sudo apt -y install gnupg ca-certificates

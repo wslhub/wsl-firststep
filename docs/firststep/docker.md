@@ -10,6 +10,6 @@ https://hub.docker.com/editions/community/docker-ce-desktop-windows 에서 Stabl
 
 ## WSL 2 연동 상태 확인하고 설정하기
 
-Docker Desktop for Windows를 실행하고 나서 `Settings` -> `Resources` -> `WSL Integrations`로 이동하여 Docker Desktop과 연결하려는 배포판 앞으 스위치를 모두 켜줍니다.
+Docker Desktop for Windows를 실행하고 나서 `Settings` -> `Resources` -> `WSL Integrations`로 이동하여 Docker Desktop과 연결하려는 배포판 앞의 스위치를 모두 켜줍니다.
 
 ![WSL 연동 설정 화면](images/wsl-integration.png)

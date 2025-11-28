@@ -115,7 +115,7 @@ If ((Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform, 
 설치가 끝난 다음에는 아래 명령어를 붙여넣으세요. 재부팅이 되었다면 다시 한 번 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요.
 
 ```powershell
-wsl --set-default-version 2
+wsl.exe --set-default-version 2
 ```
 
 ### WSL v2용 최신 리눅스 커널 업데이트하기

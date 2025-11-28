@@ -41,8 +41,8 @@ localhostForwarding=true
 해당 설정을 완료하고, wsl을 리부팅해준다.
 
 ```
-wsl --shutdown
-wsl -d <배포판 이름>
+wsl.exe --shutdown
+wsl.exe -d <배포판 이름>
 ```
 
 ## 최신 업데이트++

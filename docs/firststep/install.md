@@ -1,6 +1,8 @@
-# 커맨드라인으로 WSL v2 설치하기
+# 커맨드라인으로 WSL 2 설치하기
 
-커맨드라인으로 WSL v2를 설치하면 간단하고 빠르게 WSL v2를 시작할 수 있습니다.
+커맨드라인으로 WSL 2를 설치하면 간단하고 빠르게 WSL을 시작할 수 있습니다.
+
+> 참고: 최근의 WSL은 Microsoft Store(스토어) 배포판으로 제공되며, `wsl.exe --install` / `wsl.exe --update` 기반의 설치/업데이트 흐름을 권장합니다.
 
 ## 프로세서 아키텍처 확인하기
 
@@ -27,7 +29,7 @@ cmd.exe /c ver
 
 ### 64비트 인텔 프로세서
 
-| OS 버전    | 실행 가능한 WSL 버전 | WSL v2 필요 조건              | 커맨드라인을 통한 설치 지원[^G] | WSLg 지원 |
+| OS 버전    | 실행 가능한 WSL 버전 | WSL 2 필요 조건               | 커맨드라인을 통한 설치 지원[^G] | WSLg 지원 |
 | ---------- | -------------------- | ----------------------------- | ------------------------------- | --------- |
 | 10.0.10240 |                      |                               |                                 |           |
 | 10.0.10586 |                      |                               |                                 |           |
@@ -45,6 +47,8 @@ cmd.exe /c ver
 | 10.0.19044 | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
 | 10.0.20348 | WSL v1, WSL v2       | CPU 가상화 [^F]               | O                               |           |
 | 10.0.22000 | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
+
+> 최신 지원 범위와 권장 설치 방법은 Microsoft Learn의 WSL 문서를 함께 확인하세요: <https://learn.microsoft.com/windows/wsl/>
 
 ### 32비트 ARM 프로세서
 
@@ -84,16 +88,31 @@ Start-Process 'https://aka.ms/terminal'
 wsl.exe --install
 ```
 
+### 설치/업데이트 상태 확인하기(권장)
+
+최근 WSL(스토어 배포판)을 사용하는 경우 아래 명령으로 버전 및 상태 확인이 가능합니다.
+
+```powershell
+wsl.exe --version
+wsl.exe --status
+```
+
+WSL 자체 업데이트(리눅스 커널/WSLg 구성요소 포함)는 아래처럼 진행합니다.
+
+```powershell
+wsl.exe --update
+```
+
 컴퓨터 재시작이 필요하다는 안내가 나올 경우 안내에 따라 재시작하도록 합니다. WSL 설치가 완료된 후에는 다음의 명령어를 실행하여 커맨드라인으로 설치할 수 있는 배포판의 종류를 확인합니다.
 
 ```powershell
 wsl.exe --list --online
 ```
 
-원하는 배포판을 찾으면, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-20.04`를 설치한다고 가정하겠습니다.
+원하는 배포판을 찾으면, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-24.04`를 설치한다고 가정하겠습니다.
 
 ```powershell
-wsl.exe --install -d Ubuntu-20.04
+wsl.exe --install -d Ubuntu-24.04
 ```
 
 설치가 끝나면 자동으로 새 배포판이 실행되어 초기화 과정이 실행됩니다.
@@ -101,6 +120,8 @@ wsl.exe --install -d Ubuntu-20.04
 Windows Terminal에는 자동으로 새 항목이 등록됩니다.
 
 ## 수동 설치
+
+> 아래 수동 설치 절차는 레거시 환경(예: `wsl.exe --install`을 쓸 수 없거나, 오프라인 환경 등)에서만 필요할 수 있습니다. 가능하면 **자동 설치**를 우선 사용하세요.
 
 ### WSL, HCS 옵션 켜기
 
@@ -140,9 +161,9 @@ Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_arm64.msi
 .\wsl_update_arm64.msi
 ```
 
-> NOTE: 2020년 9월 현재 배포되는 MSI 패키지는 msiexec.exe를 사용하여 MSI 패키지를 설치하는 것이 지원되지 않아서 커맨드라인으로 리눅스 커널 패키지 설치를 자동/무인 설치 방식으로 진행하는 것에 제한이 있는 상태입니다.
+> NOTE: 최근의 WSL은 `wsl.exe --update`를 통해 커널 업데이트가 이뤄지는 경우가 많습니다. 아래 MSI 설치는 구형/특수 케이스를 위한 절차일 수 있습니다.
 
-### Ubuntu 20.04 설치하기
+### Ubuntu 24.04 설치하기
 
 WSL용 리눅스를 설치하는 방법은 스토어를 이용하는 방법과 직접 설치를 하는 방법이 있습니다. 스토어를 이용하면 설치와 관리가 간편하지만 스토어 앱을 초기화할 경우 WSL 설정이 날아가는 문제가 생길 수 있어 수동으로 설치하는 방법을 추천합니다.
 
@@ -150,13 +171,13 @@ PowerShell을 열고 아래 명령어를 붙여 넣습니다.
 
 ```powershell
 Set-Location -Path $env:USERPROFILE\Downloads
-$TargetUri = "https://aka.ms/wslubuntu2004"
+$TargetUri = "https://aka.ms/wslubuntu"
 Invoke-WebRequest -Uri $TargetUri -OutFile .\ubuntu.zip
-New-Item -Type Container -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
-Expand-Archive -Path .\ubuntu.zip -DestinationPath $env:SYSTEMDRIVE\Distro\Ubuntu2004
+New-Item -Type Container -Path $env:SYSTEMDRIVE\Distro\Ubuntu
+Expand-Archive -Path .\ubuntu.zip -DestinationPath $env:SYSTEMDRIVE\Distro\Ubuntu
 Remove-Item -Path .\ubuntu.zip
-Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
-.\ubuntu2004.exe
+Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu
+.\ubuntu.exe
 ```
 
 설치를 끝내고나면 Windows Terminal에는 자동으로 새 항목이 등록됩니다.
@@ -168,9 +189,9 @@ Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu2004
 amd64 지원 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
 
 * [Ubuntu 최신 버전](https://aka.ms/wslubuntu)
+* [Ubuntu 22.04](https://aka.ms/wslubuntu2204)
 * [Ubuntu 20.04](https://aka.ms/wslubuntu2004)
 * [Ubuntu 18.04](https://aka.ms/wsl-ubuntu-1804)
-* [Ubuntu 16.04](https://aka.ms/wsl-ubuntu-1604)
 * [Debian GNU/Linux](https://aka.ms/wsl-debian-gnulinux)
 * [Kali Linux](https://aka.ms/wsl-kali-linux-new)
 * [SUSE Linux Enterprise Server 12](https://aka.ms/wsl-sles-12)
@@ -185,6 +206,7 @@ amd64 지원 호환 프로세서를 쓰시는 분들은 아래 패키지를 사�
 
 arm64 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
 
+* [Ubuntu 22.04 ARM](https://aka.ms/wslubuntu2204arm)
 * [Ubuntu 20.04 ARM](https://aka.ms/wslubuntu2004arm)
 * [Ubuntu 18.04 ARM](https://aka.ms/wsl-ubuntu-1804-arm)
 

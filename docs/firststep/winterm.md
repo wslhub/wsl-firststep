@@ -25,7 +25,7 @@ Windows Terminal을 처음 설치하면 기본적으로 PowerShell을 사용하�
   ```json
   {
     ...
-    "startingDirectory": "\\\\wsl$\\Ubuntu-20.04\\home\\Username",
+    "startingDirectory": "\\\\wsl$\\Ubuntu-22.04\\home\\Username",
     ...
   }
   ```

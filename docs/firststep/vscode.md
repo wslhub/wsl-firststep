@@ -1,6 +1,6 @@
 # Visual Studio Code 설정하기
 
-## Visual Studio Code - WSL 플러그인 설치 
+## Visual Studio Code - WSL 플러그인 설치
 
 Visual Studio Code에서도 WSL 연동 기능을 제공합니다. Visual Studio Code를 설치한 다음 아래 플러그인을 설치해주세요.
 

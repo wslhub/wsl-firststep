@@ -22,10 +22,10 @@ wsl.exe --shutdown
 wsl.exe --list --verbose
 ```
 
-내보내려는 배포판의 이름을 확인한 후, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-20.04` 배포판을 사용자 홈 디렉터리에 내보내는 것을 가정하겠습니다.
+내보내려는 배포판의 이름을 확인한 후, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-22.04` 배포판을 사용자 홈 디렉토리에 내보내는 것을 가정하겠습니다.
 
 ```powershell
-wsl.exe --export Ubuntu-20.04 $env:USERPROFILE\Ubuntu-20.04.tar
+wsl.exe --export Ubuntu-22.04 $env:USERPROFILE\Ubuntu-22.04.tar
 ```
 
 배포판의 크기, 디스크 입출력 속도, 그리고 WSL 버전에 따라 차이가 있을 수 있으며, 시간이 오래 걸리는 작업이므로 완료될 때까지 다른 WSL 배포판을 실행하지 않도록 주의합니다.
@@ -35,14 +35,14 @@ wsl.exe --export Ubuntu-20.04 $env:USERPROFILE\Ubuntu-20.04.tar
 백업이 끝나면 파일이 잘 만들어졌는지 확인합니다.
 
 ```powershell
-dir $env:USERPROFILE\Ubuntu-20.04.tar
+dir $env:USERPROFILE\Ubuntu-22.04.tar
 ```
 
 또한 만들어진 백업 파일이 오염되거나 편집되는 것을 막기 위하여, SHA1SUM을 생성하여 기록해두었다가, 나중에 사용할 때 대조하는 것을 강력히 권장합니다. SHA1SUM을 만들기 위하여 PowerShell에서 다음의 명령어를 입력합니다. (파일 경로는 적절하게 변경합니다.)
 
 ```powershell
-(Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-20.04.tar).Hash | Out-File -FilePath $env:USERPROFILE\Ubuntu-20.04.tar.txt
-Get-Content -Path $env:USERPROFILE\Ubuntu-20.04.tar.txt
+(Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-22.04.tar).Hash | Out-File -FilePath $env:USERPROFILE\Ubuntu-22.04.tar.txt
+Get-Content -Path $env:USERPROFILE\Ubuntu-22.04.tar.txt
 ```
 
 ## 배포판 가져오기
@@ -54,16 +54,16 @@ Get-Content -Path $env:USERPROFILE\Ubuntu-20.04.tar.txt
 만들어진 배포판을 다시 복원하기 앞서, SHA1SUM 파일의 내용을 다시 검증합니다.
 
 ```powershell
-(Get-Content -Path $env:USERPROFILE\Ubuntu-20.04.tar.txt) -eq (Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-20.04.tar).Hash
+(Get-Content -Path $env:USERPROFILE\Ubuntu-22.04.tar.txt) -eq (Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-22.04.tar).Hash
 ```
 
 위 명령을 실행했을 때 나오는 결과가 `True`로 표시되면 문제가 없는 것입니다.
 
-그 다음 배포판을 복원하기 위하여 다음과 같이 명령어를 입력합니다. 여기서는 사용자 홈 디렉터리에 만들어진 tar 파일을 `MyUbuntu` 라는 이름으로 `C:\Distro\MyUbuntu` 폴더에 WSL v2로 복원하는 것으로 가정하겠습니다.
+그 다음 배포판을 복원하기 위하여 다음과 같이 명령어를 입력합니다. 여기서는 사용자 홈 디렉토리에 만들어진 tar 파일을 `MyUbuntu` 라는 이름으로 `C:\Distro\MyUbuntu` 폴더에 WSL v2로 복원하는 것으로 가정하겠습니다.
 
 ```powershell
 mkdir C:\Distro\MyUbuntu
-wsl.exe --import MyUbuntu C:\Distro\MyUbuntu $env:USERPROFILE\Ubuntu-20.04.tar --version 2
+wsl.exe --import MyUbuntu C:\Distro\MyUbuntu $env:USERPROFILE\Ubuntu-22.04.tar --version 2
 ```
 
 백업 파일의 크기, 디스크 입출력 속도, 그리고 WSL 버전에 따라 차이가 있을 수 있으며, 시간이 오래 걸리는 작업이므로 완료될 때까지 기다립니다.
@@ -123,7 +123,7 @@ wsl.exe --distribution 'MyUbuntu' --user root -- cat /etc/wsl.conf
 
 그 다음 아래 명령어를 사용하여 WSL 전체를 Shutdown하고 다시 해당 배포판을 시작합니다. 이렇게 하는 이유는, `/etc/wsl.conf`의 설정은 레지스트리와는 별개로 WSL의 코어 시스템인 `LxssManager`에 직접 적용되는 설정이고, 해당 서비스를 다시 시작하기 전까지는 설정이 유지되기 때문입니다.
 
-```poweshell
+```powershell
 wsl.exe --shutdown
 wsl.exe --distribution 'MyUbuntu'
 ```

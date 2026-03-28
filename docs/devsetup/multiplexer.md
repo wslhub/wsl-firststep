@@ -4,7 +4,7 @@ Windows Terminal을 사용하는 경우, 리눅스의 유틸리티인 `tmux`나 
 
 이 문서는 Windows Terminal의 기본 멀티플렉서를 사용할 수 있는 단축 키를 모아놓은 치트시트 문서입니다.
 
-자세한 내용은 [이곳](https://docs.microsoft.com/en-us/windows/terminal/panes)을 참고하세요.
+자세한 내용은 [이곳](https://learn.microsoft.com/windows/terminal/panes)을 참고하세요.
 
 ## 창 분할하기
 

@@ -8,13 +8,19 @@
 
 ## 패키지 미러 주소 변경하기
 
-2020년 여름 현재 통신사가 대역폭 제한을 설정하여 정상적으로 해외 CDN 서버에서 빠른 속도로 파일을 다운로드할 수 없는 경우가 발생하고 있습니다. 이럴 때는 한국의 미러 서버를 사용하도록 고쳐주는 것이 좋습니다.
+통신사의 대역폭 제한으로 해외 CDN 서버에서 빠른 속도로 파일을 다운로드할 수 없는 경우가 있습니다. 이럴 때는 한국의 미러 서버를 사용하도록 변경하는 것이 좋습니다.
 
 카카오의 미러 서버로 변경하여 패키지를 업데이트하도록 아래와 같이 명령어를 붙여넣습니다.
 
 ```bash
 sudo sed -i 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
 ```
+
+> 참고: Ubuntu 24.04부터는 APT 소스 설정 파일이 `/etc/apt/sources.list.d/ubuntu.sources` 형식으로 변경되었습니다. 이 경우 아래 명령어를 대신 사용하세요.
+>
+> ```bash
+> sudo sed -i 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list.d/ubuntu.sources
+> ```
 
 ## 패키지 업데이트, 업그레이드, 불필요한 패키지 자동 제거
 
@@ -31,7 +37,7 @@ sudo apt -y install zsh
 ## Oh-My-ZSH 설치하기
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
 ## 기본 셸 변경하기

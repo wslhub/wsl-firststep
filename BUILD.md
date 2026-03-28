@@ -1,6 +1,6 @@
 # 로컬에서 문서 보기
 
-로컬에서 문서를 보려면, Python 3.8 이상, `pip`를 설치한 다음, `mkdocs`, `mkdocs-material`을 설치합니다.
+로컬에서 문서를 보려면, Python 3.10 이상, `pip`를 설치한 다음, `mkdocs`, `mkdocs-material`을 설치합니다.
 
 ```bash
 pip install mkdocs

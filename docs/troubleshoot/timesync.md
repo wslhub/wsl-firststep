@@ -5,7 +5,7 @@ WSL 2의 경우, 특정 조건(예: 절전모드/하이버네이션 후 복귀)�
 
 2019년부터 관련 이슈가 여러 번 제기되었으며, 사용 환경(Windows 버전, WSL 버전, systemd 활성화 여부 등)에 따라 재현성과 증상이 다를 수 있습니다. 본 문서를 통해 문제 해결 방법을 알아봅니다.
 
-> 참고: 최근 WSL 버전과 systemd를 활성화한 환경에서는 시간 동기화가 더 안정적으로 동작하는 경향이 있습니다. `wsl --version`으로 현재 WSL 버전을 확인하세요.
+> 참고: WSL 0.67.6 이상과 systemd를 활성화한 환경에서는 시간 동기화가 안정적으로 동작합니다. `wsl.exe --version`으로 현재 WSL 버전을 확인하세요.
 
 * [WSL2: Clock skewed? #4677](https://github.com/microsoft/WSL/issues/4677)
 * [WSL2 - clock problems during build #4975](https://github.com/microsoft/WSL/issues/4975)
@@ -39,7 +39,7 @@ sudo service chrony start
 
 ## systemd를 사용하는 경우 (권장)
 
-최신 WSL 버전(WSL 0.67.6 이상)과 Ubuntu 22.04 이상을 사용하는 경우, systemd가 기본으로 활성화됩니다.
+WSL 0.67.6 이상과 Ubuntu 22.04 이상을 사용하는 경우, systemd가 기본으로 활성화됩니다. systemd가 활성화된 환경에서는 시간 동기화가 더 안정적으로 동작합니다.
 
 systemd 환경에서는 `systemd-timesyncd` 또는 `chrony`를 systemd 서비스로 관리할 수 있습니다:
 
@@ -59,7 +59,9 @@ sudo systemctl start chrony
 sudo systemctl status chrony
 ```
 
-## 시간 동기화 명령 자동 실행 (systemd 미사용 환경)
+## 시간 동기화 명령 자동 실행 (레거시: systemd 미사용 환경)
+
+> 아래 방법은 systemd를 사용하지 않는 구형 WSL 환경에서만 필요합니다. systemd가 활성화된 환경(WSL 0.67.6 이상 + Ubuntu 22.04 이상)에서는 위의 systemd 기반 방법을 사용하세요.
 
 systemd를 사용하지 않는 환경에서는 셸 프로필 파일을 통해 시간 동기화를 자동 실행하도록 설정할 수 있습니다.
 

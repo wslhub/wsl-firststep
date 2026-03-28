@@ -2,19 +2,19 @@
 
 Go 개발 환경을 설치하기 위해서는 다음의 단계를 따릅니다.
 
-1. Golang 공식 웹 사이트의 [다운로드 페이지](https://golang.org/dl/) 에서 원하는 Golang 버전의 리눅스용 버전을 찾아 주소를 복사합니다. 여기서는 `1.14.6` 버전을 설치한다고 가정하겠습니다.
+1. Golang 공식 웹 사이트의 [다운로드 페이지](https://go.dev/dl/) 에서 원하는 Golang 버전의 리눅스용 버전을 찾아 주소를 복사합니다. 여기서는 `1.22.0` 버전을 설치한다고 가정하겠습니다.
 
 1. 다음 명령어를 실행합니다.
 
    ```bash
    pushd /tmp
-   wget https://dl.google.com/go/go1.14.6.linux-amd64.tar.gz
-   sudo tar -xvf go1.14.6.linux-amd64.tar.gz
-   sudo mv ./go/ /usr/local/
+   wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
+   sudo rm -rf /usr/local/go
+   sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
    popd
    ```
 
-1. 환경 변수를 `~/.bashrc` 또는 `~/.zhsrc` 파일에 설정합니다. 아래의 줄을 파일 가장 마지막에 추가합니다.
+1. 환경 변수를 `~/.bashrc` 또는 `~/.zshrc` 파일에 설정합니다. 아래의 줄을 파일 가장 마지막에 추가합니다.
 
    ```bash
    export GOROOT=/usr/local/go

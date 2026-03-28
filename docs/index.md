@@ -10,7 +10,7 @@ WSL을 설치하는 과정에서, 그리고 WSL을 설치하고나서 제일 먼
 
 ## 알아둘 것
 
-이 가이드에서 리눅스 환경이 아닌 윈도우 환경은 모두 Windows PowerShell 5.x 버전대를 기준으로 실행하며, 때에 따라 관리자 권한을 필요로 하는 작업을 진행해야 할 수 있습니다. PowerShell Core 6.x 및 PowerShell 7.x에서는 지원되지 않는 모듈을 이용할 수도 있으니 작업 전 사용 중인 PowerShell 버전이 Windows PowerShell 인지 다시 한 번 확인하도록 합니다.
+이 가이드에서 리눅스 환경이 아닌 윈도우 환경은 PowerShell 7.x 또는 Windows PowerShell 5.1을 기준으로 실행하며, 때에 따라 관리자 권한을 필요로 하는 작업을 진행해야 할 수 있습니다. 가능하면 [PowerShell 7.x](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows)를 설치하여 사용하는 것을 권장합니다.
 
 ## 페이스북 그룹
 

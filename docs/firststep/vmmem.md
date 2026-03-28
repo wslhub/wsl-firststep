@@ -5,7 +5,7 @@ WSL 2 환경을 처음 구축 시 WSL 2의 특성과 리눅스의 특성의 결�
 - 리눅스: RAM의 한계치까지 파일의 정보를 최대한 캠시로 보존.
 - WSL 2: WSL 2에 할당된 RAM이 부족해지면 WSL 2에 추가적인 RAM을 할당.
 
-> 참고: 최근 WSL 버전(2023년 9월 이후)에서는 **자동 메모리 회수(autoMemoryReclaim)** 기능이 실험적으로 제공되며, 이를 활용하면 캐시 메모리를 자동으로 회수하여 vmmem 점유율을 크게 줄일 수 있습니다.
+> 참고: WSL 0.67.6 이상(2023년 9월 이후)에서는 **자동 메모리 회수(autoMemoryReclaim)** 기능이 제공되며, 이를 활용하면 캐시 메모리를 자동으로 회수하여 vmmem 점유율을 크게 줄일 수 있습니다.
 
 ## 램 사용량 보기
 
@@ -55,7 +55,7 @@ wsl.exe -d <배포판 이름>
 
 ## 자동 메모리 회수 기능 활용하기 (권장)
 
-2023년 9월 업데이트부터 **autoMemoryReclaim** 설정이 도입되어, WSL 2가 사용하지 않는 캐시 메모리를 자동으로 Windows로 반환할 수 있습니다.
+WSL 0.67.6 이상(2023년 9월 업데이트)부터 **autoMemoryReclaim** 설정이 도입되어, WSL 2가 사용하지 않는 캐시 메모리를 자동으로 Windows로 반환할 수 있습니다.
 
 `.wslconfig` 파일에 다음과 같이 추가합니다:
 
@@ -76,7 +76,6 @@ autoMemoryReclaim=gradual
 
 > 참고:
 >
-> - 이 기능은 아직 실험적(experimental) 단계이므로 일부 워크로드에서 예상치 못한 동작이 발생할 수 있습니다.
 > - Docker Desktop 사용자의 경우 이 기능을 활성화하면 메모리 사용량이 크게 개선됩니다.
 > - 자세한 내용: <https://devblogs.microsoft.com/commandline/windows-subsystem-for-linux-september-2023-update/>
 

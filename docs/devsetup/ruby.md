@@ -57,7 +57,7 @@ Ruby 개발 환경을 설치하는 방법은 크게 4가지가 있습니다.
 1. asdf를 다운로드합니다
 
     ```bash
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.1
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
     ```
 
 1. 쉘에서 명령어를 실행할 수 있도록 합니다
@@ -80,32 +80,32 @@ Ruby 개발 환경을 설치하는 방법은 크게 4가지가 있습니다.
     asdf list ruby
     ```
 
-    위의 명령어를 실행했을 때 나타나는 버전 목록 중 원하는 버전을 선택합니다. 여기서는 3.0.2 버전을 사용하여 설치한다고 가정하겠습니다.
+    위의 명령어를 실행했을 때 나타나는 버전 목록 중 원하는 버전을 선택합니다. 여기서는 3.3.0 버전을 사용하여 설치한다고 가정하겠습니다.
 
     ```bash
-    asdf install ruby 3.0.2
+    asdf install ruby 3.3.0
     ```
 
 1. 프로젝트 내에서 사용할 Ruby 버전을 지정합니다.
 
     ```bash
-    asdf local ruby 3.0.2
+    asdf local ruby 3.3.0
     ```
 
     전역으로 설치를 원한다면 아래 명령어를 실행합니다.
 
     ```bash
-    asdf global ruby 3.0.2
+    asdf global ruby 3.3.0
     ```
 
 ## 소스를 빌드하여 설치하는 방법
 
-1. [Ruby 다운로드](https://www.ruby-lang.org/en/downloads/)를 통해서 원하는 버전을 다운로드합니다. 3.0.2 버전을 예로 들어 진행하겠습니다.
+1. [Ruby 다운로드](https://www.ruby-lang.org/en/downloads/)를 통해서 원하는 버전을 다운로드합니다. 3.3.0 버전을 예로 들어 진행하겠습니다.
 
 1. 다운로드 받은 파일의 압축을 해제합니다.
 
     ```bash
-    tar -xf ruby-3.0.2.tar.gz
+    tar -xf ruby-3.3.0.tar.gz
     ```
 
 1. 압축 해제된 폴더에 들어가 빌드합니다.

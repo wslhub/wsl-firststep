@@ -25,7 +25,7 @@ Windows Terminal을 처음 설치하면 기본적으로 PowerShell을 사용하�
   ```json
   {
     ...
-    "startingDirectory": "\\\\wsl$\\Ubuntu-22.04\\home\\Username",
+    "startingDirectory": "\\\\wsl$\\Ubuntu-24.04\\home\\Username",
     ...
   }
   ```
@@ -92,4 +92,4 @@ Windows terminal `settings.json`에서 Theme를 설정할 수 있습니다. 대�
   }],
 ```
 
-다른 종류의 테마는 [Windows Terminal Themes](https://atomcorp.github.io/themes/) 와 같은 곳에서 쉽게 찾아볼 수 있습니다.
+다른 종류의 테마는 [Windows Terminal Themes](https://windowsterminalthemes.dev/) 와 같은 곳에서 쉽게 찾아볼 수 있습니다.

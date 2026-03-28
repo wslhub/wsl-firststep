@@ -17,10 +17,10 @@
 
 ## 지원되는 윈도우 버전 확인하기
 
-내가 실행하는 윈도우 10 버전이 정확히 어떻게 되는지 확인하려면 PowerShell에서 다음과 같이 실행합니다.
+내가 실행하는 윈도우 버전이 정확히 어떻게 되는지 확인하려면 PowerShell에서 다음과 같이 실행합니다.
 
 ```powershell
-cmd.exe /c ver
+[Environment]::OSVersion.Version
 ```
 
 ### 32비트 인텔 프로세서
@@ -29,26 +29,20 @@ cmd.exe /c ver
 
 ### 64비트 인텔 프로세서
 
-| OS 버전    | 실행 가능한 WSL 버전 | WSL 2 필요 조건               | 커맨드라인을 통한 설치 지원[^G] | WSLg 지원 |
-| ---------- | -------------------- | ----------------------------- | ------------------------------- | --------- |
-| 10.0.10240 |                      |                               |                                 |           |
-| 10.0.10586 |                      |                               |                                 |           |
-| 10.0.14393 | 레거시 WSL[^C]       |                               |                                 |           |
-| 10.0.14393 | 레거시 WSL[^C]       |                               |                                 |           |
-| 10.0.15063 | 레거시 WSL[^C]       |                               |                                 |           |
-| 10.0.16299 | WSL v1               |                               |                                 |           |
-| 10.0.17134 | WSL v1               |                               |                                 |           |
-| 10.0.17763 | WSL v1               |                               |                                 |           |
-| 10.0.18362 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^D] |                                 |           |
-| 10.0.18363 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^D] |                                 |           |
-| 10.0.19041 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^E] | O                               |           |
-| 10.0.19042 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^E] | O                               |           |
-| 10.0.19043 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^E] | O                               |           |
-| 10.0.19044 | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
-| 10.0.20348 | WSL v1, WSL v2       | CPU 가상화 [^F]               | O                               |           |
-| 10.0.22000 | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
+| OS 버전                          | 실행 가능한 WSL 버전 | WSL 2 필요 조건               | 커맨드라인을 통한 설치 지원[^G] | WSLg 지원 |
+| -------------------------------- | -------------------- | ----------------------------- | ------------------------------- | --------- |
+| 10.0.19041 (Windows 10 v2004)    | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^E] | O                               |           |
+| 10.0.19044 (Windows 10 21H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
+| 10.0.19045 (Windows 10 22H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
+| 10.0.20348 (Windows Server 2022) | WSL v1, WSL v2       | CPU 가상화 [^F]               | O                               |           |
+| 10.0.22000 (Windows 11 21H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
+| 10.0.22621 (Windows 11 22H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
+| 10.0.22631 (Windows 11 23H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
+| 10.0.26100 (Windows 11 24H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
 
 > 최신 지원 범위와 권장 설치 방법은 Microsoft Learn의 WSL 문서를 함께 확인하세요: <https://learn.microsoft.com/windows/wsl/>
+>
+> Windows 10은 2025년 10월에 지원이 종료됩니다. 가능하면 Windows 11로 업그레이드하는 것을 권장합니다.
 
 ### 32비트 ARM 프로세서
 
@@ -56,17 +50,15 @@ cmd.exe /c ver
 
 ### 64비트 ARM 프로세서
 
-| OS 버전    | 실행 가능한 WSL 버전 | WSL v2 필요 조건          | 커맨드라인을 통한 설치 지원 | WSLg 지원 |
-| ---------- | -------------------- | ------------------------- | --------------------------- | --------- |
-| 10.0.17134 | WSL v1               |                           |                             |           |
-| 10.0.17763 | WSL v1               |                           |                             |           |
-| 10.0.18362 | WSL v1               |                           |                             |           |
-| 10.0.18363 | WSL v1               |                           |                             |           |
-| 10.0.19041 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
-| 10.0.19042 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
-| 10.0.19043 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
-| 10.0.19044 | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
-| 10.0.22000 | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
+| OS 버전                          | 실행 가능한 WSL 버전 | WSL v2 필요 조건          | 커맨드라인을 통한 설치 지원 | WSLg 지원 |
+| -------------------------------- | -------------------- | ------------------------- | --------------------------- | --------- |
+| 10.0.19041 (Windows 10 v2004)    | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
+| 10.0.19044 (Windows 10 21H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           |           |
+| 10.0.19045 (Windows 10 22H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           |           |
+| 10.0.22000 (Windows 11 21H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
+| 10.0.22621 (Windows 11 22H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
+| 10.0.22631 (Windows 11 23H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
+| 10.0.26100 (Windows 11 24H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
 
 ## Windows Terminal 설치하기
 
@@ -182,44 +174,36 @@ Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu
 
 설치를 끝내고나면 Windows Terminal에는 자동으로 새 항목이 등록됩니다.
 
-만약에 Ubuntu 20.04 대신 다른 배포판을 설치하고 싶다면, 아래 부록을 참고하세요.
+만약에 Ubuntu 24.04 대신 다른 배포판을 설치하고 싶다면, 아래 부록을 참고하세요.
 
 ### 다른 리눅스 패키지 찾아보기
 
 amd64 지원 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
 
-* [Ubuntu 최신 버전](https://aka.ms/wslubuntu)
+* [Ubuntu 최신 버전](https://aka.ms/wslubuntu) (권장)
+* [Ubuntu 24.04](https://aka.ms/wslubuntu2404)
 * [Ubuntu 22.04](https://aka.ms/wslubuntu2204)
-* [Ubuntu 20.04](https://aka.ms/wslubuntu2004)
-* [Ubuntu 18.04](https://aka.ms/wsl-ubuntu-1804)
 * [Debian GNU/Linux](https://aka.ms/wsl-debian-gnulinux)
 * [Kali Linux](https://aka.ms/wsl-kali-linux-new)
-* [SUSE Linux Enterprise Server 12](https://aka.ms/wsl-sles-12)
-* [SUSE Linux Enterprise Server 15 SP2](https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP2)
 * [SUSE Linux Enterprise Server 15 SP3](https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP3)
 * [openSUSE Tumbleweed](https://aka.ms/wsl-opensuse-tumbleweed)
-* [openSUSE Leap 15.3](https://aka.ms/wsl-opensuseleap15-3)
-* [openSUSE Leap 15.2](https://aka.ms/wsl-opensuseleap15-2)
 * [Oracle Linux 8.5](https://aka.ms/wsl-oraclelinux-8-5)
 * [Oracle Linux 7.9](https://aka.ms/wsl-oraclelinux-7-9)
 * [Fedora Remix for WSL](https://github.com/WhitewaterFoundry/WSLFedoraRemix/releases/)
 
 arm64 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
 
+* [Ubuntu 24.04 ARM](https://aka.ms/wslubuntu2404arm)
 * [Ubuntu 22.04 ARM](https://aka.ms/wslubuntu2204arm)
-* [Ubuntu 20.04 ARM](https://aka.ms/wslubuntu2004arm)
-* [Ubuntu 18.04 ARM](https://aka.ms/wsl-ubuntu-1804-arm)
 
-[^A]: CPU 가상화 기술이 지원되어야 합니다. 만약 가상 컴퓨터에서 윈도우 10 또는 윈도우 11을 실행 중인 경우, 중첩 가상화 기능이 설정된 인스턴스에서만 WSL v2를 실행할 수 있습니다. 다만 일부 반기 채널 버전이나 프리뷰 버전을 제외하고 2022년 현재 윈도우 서버에서는 WSL v1만 사용 가능합니다.
+> 참고: Ubuntu 20.04는 2025년 4월에 표준 지원이 종료되었습니다. 새로 설치하는 경우 Ubuntu 24.04 LTS를 권장합니다.
+
+[^A]: CPU 가상화 기술이 지원되어야 합니다. 만약 가상 컴퓨터에서 윈도우 10 또는 윈도우 11을 실행 중인 경우, 중첩 가상화 기능이 설정된 인스턴스에서만 WSL v2를 실행할 수 있습니다.
 
 [^B]: 윈도우 10 버전 2004 (10.0.19041) 이상의 OS가 필요합니다.
 
-[^C]: 레거시 WSL은 WSL v1 이전에 나온 Bash on Ubuntu on Windows를 말하며, WSL v1으로 업그레이드가 필요합니다.
-
-[^D]: [KB4566116](https://www.catalog.update.microsoft.com/Search.aspx?q=KB4566116) 핫픽스를 설치해야 WSL v2를 사용할 수 있습니다. 특별한 경우가 아니라면, 윈도우 업데이트를 이용하여 모든 업데이트를 설치하면 간편하게 적용이 가능합니다.
-
 [^E]: [KB5004296](https://www.catalog.update.microsoft.com/Search.aspx?q=KB5004296) 핫픽스를 설치해야 WSL v2를 사용할 수 있습니다. 특별한 경우가 아니라면, 윈도우 업데이트를 이용하여 모든 업데이트를 설치하면 간편하게 적용이 가능합니다.
 
-[^F]: 일부 반기 채널 버전이나 프리뷰 버전을 제외하고, 윈도우 서버 2022의 경우 [KB5014021](https://www.catalog.update.microsoft.com/Search.aspx?q=KB5014021) 및 연관되는 업데이트를 설치하면 사용 가능합니다. [자세한 내용 보기](https://techcommunity.microsoft.com/t5/itops-talk-blog/wsl2-now-available-on-windows-server-2022/ba-p/3447570) 단, 현재 WSLg는 사용할 수 없으며, 서버 코어 모드의 경우 `--install` 스위치를 통한 설치가 불가능할 수 있습니다.
+[^F]: 윈도우 서버 2022의 경우 [KB5014021](https://www.catalog.update.microsoft.com/Search.aspx?q=KB5014021) 및 연관되는 업데이트를 설치하면 사용 가능합니다. [자세한 내용 보기](https://techcommunity.microsoft.com/t5/itops-talk-blog/wsl2-now-available-on-windows-server-2022/ba-p/3447570) 단, 현재 WSLg는 사용할 수 없으며, 서버 코어 모드의 경우 `--install` 스위치를 통한 설치가 불가능할 수 있습니다.
 
 [^G]: `--install` 스위치를 이용하여 한 번에 설치할 수 있는 방식을 말합니다.

@@ -6,7 +6,9 @@
 
 ### 방법 1: 스크립트를 이용한 설치 (권장)
 
-Microsoft에서 제공하는 설치 스크립트를 이용하면 간편하게 최신 .NET SDK를 설치할 수 있습니다.
+Microsoft에서 제공하는 공식 설치 스크립트를 이용하면 간편하게 최신 .NET SDK를 설치할 수 있습니다.
+
+> 참고: 원격 스크립트를 다운로드하여 실행하기 전에 내용을 확인하는 것이 좋습니다. 이 스크립트는 [Microsoft 공식 dotnet-install 문서](https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script)에서 제공하는 것으로, SHA512 체크섬을 해당 문서에서 확인할 수 있습니다.
 
 ```bash
 wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh

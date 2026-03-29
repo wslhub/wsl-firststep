@@ -46,7 +46,7 @@ wsl.exe --import <DistributionName> <InstallLocation> <FileName> --version <1|2>
 예를 들어, WSL 2 기반으로 Ubuntu 24.04를 `MyUbuntu`라는 이름의 배포판을 `C:\Distro\MyUbuntu`에 복원하려면 다음과 같이 명령어를 실행할 수 있습니다.
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing -Uri 'https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64-wsl.rootfs.tar.gz' -OutFile 'ubuntu.tar.gz'
+Invoke-WebRequest -Uri 'https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64-wsl.rootfs.tar.gz' -OutFile 'ubuntu.tar.gz'
 wsl.exe --import MyUbuntu C:\Distro\MyUbuntu ubuntu.tar.gz --version 2
 ```
 

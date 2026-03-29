@@ -38,11 +38,11 @@ wsl.exe --export Ubuntu-24.04 $env:USERPROFILE\Ubuntu-24.04.tar
 dir $env:USERPROFILE\Ubuntu-24.04.tar
 ```
 
-또한 만들어진 백업 파일이 오염되거나 편집되는 것을 막기 위하여, SHA1SUM을 생성하여 기록해두었다가, 나중에 사용할 때 대조하는 것을 강력히 권장합니다. SHA1SUM을 만들기 위하여 PowerShell에서 다음의 명령어를 입력합니다. (파일 경로는 적절하게 변경합니다.)
+또한 만들어진 백업 파일이 오염되거나 편집되는 것을 막기 위하여, SHA256 해시를 생성하여 기록해두었다가, 나중에 사용할 때 대조하는 것을 강력히 권장합니다. 해시를 만들기 위하여 PowerShell에서 다음의 명령어를 입력합니다. (파일 경로는 적절하게 변경합니다.)
 
 ```powershell
-(Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash | Out-File -FilePath $env:USERPROFILE\Ubuntu-24.04.tar.txt
-Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.txt
+(Get-FileHash -Algorithm SHA256 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash | Out-File -FilePath $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt
+Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt
 ```
 
 ## 배포판 가져오기
@@ -51,10 +51,10 @@ Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.txt
 >
 > 배포판을 복원하기 전에, 복원하려는 파일이 신뢰할 수 있는 파일인지 다시 한 번 확인합니다. 악성 코드 등으로 오염된 배포판을 사용할 경우 시스템에 치명적인 문제가 발생하거나, 개인 정보나 민감한 정보가 탈취될 수 있습니다.
 
-만들어진 배포판을 다시 복원하기 앞서, SHA1SUM 파일의 내용을 다시 검증합니다.
+만들어진 배포판을 다시 복원하기 앞서, SHA256 해시 파일의 내용을 다시 검증합니다.
 
 ```powershell
-(Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.txt) -eq (Get-FileHash -Algorithm SHA1 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash
+(Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt) -eq (Get-FileHash -Algorithm SHA256 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash
 ```
 
 위 명령을 실행했을 때 나오는 결과가 `True`로 표시되면 문제가 없는 것입니다.

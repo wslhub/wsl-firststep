@@ -16,8 +16,13 @@ sudo apt -y install openjdk-17-jdk
 
 > 참고: 여러 JDK 버전을 관리하려면 [SDKMAN](https://sdkman.io/)을 사용하는 것도 좋은 방법입니다.
 >
+> 다만, `curl ... | bash`와 같이 원격 스크립트를 바로 셸에 파이프로 넘겨 실행하는 방식은 보안상 위험할 수 있습니다. 설치 전에 스크립트 내용을 직접 확인하거나, SDKMAN 공식 문서에서 안내하는 최신 설치/검증 절차를 따르는 것을 권장합니다.
+>
 > ```bash
-> curl -s "https://get.sdkman.io" | bash
+> # 설치 스크립트를 먼저 내려받고 내용을 확인한 뒤 실행하는 예시입니다.
+> curl -s "https://get.sdkman.io" -o install-sdkman.sh
+> less install-sdkman.sh   # 내용 확인 후 실행 여부를 결정하세요.
+> bash install-sdkman.sh
 > source "$HOME/.sdkman/bin/sdkman-init.sh"
 > sdk install java 21.0.2-tem
 > ```
@@ -27,9 +32,11 @@ sudo apt -y install openjdk-17-jdk
 1. 환경 변수를 `~/.bashrc` 또는 `~/.zshrc` 파일에 설정합니다. 아래의 줄을 파일 가장 마지막에 추가합니다. 여기서는 OpenJDK 21 버전을 설치했다고 가정하겠습니다. 다른 버전을 설치한 경우 21 대신 적절한 버전 번호를 대신 지정합니다.
 
    ```bash
-   export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+   export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))))
    export PATH=$PATH:$JAVA_HOME/bin
    ```
+
+   > 참고: 위 명령은 설치된 JDK의 실제 경로를 자동으로 감지합니다. 수동으로 지정하려면 amd64 환경에서는 `/usr/lib/jvm/java-21-openjdk-amd64`, arm64 환경에서는 `/usr/lib/jvm/java-21-openjdk-arm64`를 사용합니다.
 
 1. 환경 변수를 다시 불러오기 위하여 `~/.bashrc` 또는 `~/.zshrc` 파일을 다시 로드하거나, 새로운 터미널 창을 엽니다.
 

@@ -8,9 +8,20 @@ Go 개발 환경을 설치하기 위해서는 다음의 단계를 따릅니다.
 
    ```bash
    pushd /tmp
-   wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
+   ARCH=$(uname -m)
+   case "$ARCH" in
+     x86_64) GOARCH=amd64 ;;
+     aarch64|arm64) GOARCH=arm64 ;;
+     *)
+       echo "지원되지 않는 아키텍처입니다: $ARCH"
+       echo "https://go.dev/dl/ 에서 직접 tar.gz 파일을 선택해 주세요."
+       exit 1
+       ;;
+   esac
+   FILENAME=go1.22.0.linux-${GOARCH}.tar.gz
+   wget "https://go.dev/dl/${FILENAME}"
    sudo rm -rf /usr/local/go
-   sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
+   sudo tar -C /usr/local -xzf "${FILENAME}"
    popd
    ```
 

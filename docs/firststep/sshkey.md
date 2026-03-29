@@ -33,7 +33,15 @@ Set-Service ssh-agent -StartupType Automatic
 Start-Service ssh-agent
 ```
 
-그런 다음 Windows 측에서 키를 등록합니다:
+그런 다음 Windows 측에서 키를 등록합니다. WSL에서 생성한 키를 Windows 프로필의 `.ssh` 폴더로 먼저 복사해야 합니다:
+
+```bash
+# WSL에서 실행: 키를 Windows 측으로 복사
+cp ~/.ssh/id_ed25519 /mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')/.ssh/
+cp ~/.ssh/id_ed25519.pub /mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')/.ssh/
+```
+
+그 다음 PowerShell에서 키를 등록합니다:
 
 ```powershell
 ssh-add $env:USERPROFILE\.ssh\id_ed25519

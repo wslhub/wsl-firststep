@@ -49,11 +49,13 @@ Windows PowerShell에서는 `py -3.13 -m venv .venv`로 만들고 아래 명령�
 
 README.md와 docs/index.md는 각각 GitHub와 웹사이트용 진입점을 제공합니다. 상대 링크 기준이 달라 별도 파일로 관리합니다.
 
-## GitHub Actions와 기존 Pages 배포
+## 검증한 산출물의 Pages 배포
 
-Pull Request에서는 읽기 권한으로 문서를 빌드하고 검증합니다. master 반영 후에는 검증을 통과한 경우에만 배포 작업을 진행합니다. 공식 Actions는 확인한 커밋으로 고정하며 [MkDocs gh-deploy](https://www.mkdocs.org/user-guide/deploying-your-docs/#github-pages)로 기존 gh-pages 브랜치에 추가 커밋을 만듭니다.
+Pull Request에서는 저장소 읽기 권한으로 문서를 빌드하고 검증한 뒤 Pages 산출물을 업로드합니다. master 반영 후에는 같은 검증을 통과한 산출물을 [공식 Pages Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)로 배포합니다. 배포 작업만 Pages 쓰기 권한과 OIDC 토큰 발급 권한을 사용하며 공식 Actions는 확인한 커밋으로 고정합니다.
 
-GitHub Pages는 기존 gh-pages 브랜치의 루트를 사용합니다. 프로젝트 주소는 `https://wslhub.com/wsl-firststep/`이며 이 저장소에 도메인 루트용 CNAME을 추가하지 않습니다. 브랜치 보호 규칙에 필요한 PR 승인은 저장소 설정을 따릅니다.
+이 워크플로를 처음 적용할 때 저장소 Settings의 Pages에서 Build and deployment의 Source를 GitHub Actions로 지정합니다. [GitHub 문서](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)에 따르면 GITHUB_TOKEN으로 푸시한 커밋은 Pages 빌드를 시작하지 않습니다. 따라서 배포용 커밋을 만드는 대신 검증한 산출물을 직접 배포합니다. 기존 gh-pages 브랜치는 이전 배포 기록으로 남습니다.
+
+프로젝트 주소는 `https://wslhub.com/wsl-firststep/`이며 이 저장소에 도메인 루트용 CNAME을 추가하지 않습니다. 브랜치 보호 규칙에 필요한 PR 승인은 저장소 설정을 따릅니다.
 
 ## 빌드 검증과 실행 검증의 범위
 

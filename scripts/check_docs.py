@@ -38,7 +38,7 @@ for source in sorted((ROOT / 'docs').rglob('*.md')):
     if not soup.html or soup.html.get('lang') != 'ko':
         errors.append(f'{relative}: Korean document language missing')
     # Parse examples without executing user-facing commands.
-    for language, code in re.findall(r'^```(json|ini)\n(.*?)^```', source.read_text(), re.M | re.S):
+    for language, code in re.findall(r'^```(json|ini)\n(.*?)^```', source.read_text(encoding='utf-8'), re.M | re.S):
         try:
             if language == 'json':
                 json.loads(code)
@@ -79,7 +79,7 @@ search = SITE / 'search/search_index.json'
 if not search.is_file():
     errors.append('Missing search index')
 else:
-    locations = {row['location'].split('#')[0] for row in json.loads(search.read_text())['docs']}
+    locations = {row['location'].split('#')[0] for row in json.loads(search.read_text(encoding='utf-8'))['docs']}
     for required in ('firststep/ubuntu/', 'firststep/wslc/', 'advanced/copy-distro/', 'devsetup/multiplexer/'):
         if required not in locations:
             errors.append(f'Missing search entry: {required}')

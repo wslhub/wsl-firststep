@@ -1,117 +1,69 @@
-# Ruby 개발 환경 설치하기
+# Ubuntu에서 Ruby 설치와 버전 관리
 
-Ruby 개발 환경을 설치하는 방법은 크게 4가지가 있습니다.
+2026년 9월 5일 기준으로 Ubuntu 패키지 또는 별도 버전 관리 도구로 Ruby를 설치할 수 있습니다. asdf는 현재 바이너리 설치와 `asdf set` 명령을 사용합니다.
 
-* 시스템 패키지 매니저를 통해 설치하는 방법 (이 경우 설치된 버전이 최신 버전이 아닐 수 있습니다.)
-* 인스톨러를 통해 설치하는 방법
-* 매니저를 통해 여러 버전을 설치하는 방법
-* 소스를 빌드하여 설치하는 방법
+패키지 설치, asdf 준비, 설치 가능 버전, 프로젝트 버전 선택, 실행 검증을 다룹니다.
 
-## 시스템 패키지 매니저를 통해 설치하기
+Ubuntu에서 기본 설치를 시작한 뒤 여러 버전이 필요한 경우에만 버전 관리 도구를 추가합니다. [Ruby 공식 설치 안내](https://www.ruby-lang.org/en/documentation/installation/)를 기준으로 선택할 수 있습니다.
 
-패키지 관리 시스템을 통해 설치하는 방법은 가장 쉬운 방법입니다.
-그러나 설치된 패키지 버전이 최신 버전이 아닐 수 있습니다.
+## Ubuntu 패키지로 Ruby 설치
 
-1. 다음 명령어를 실행해 Ruby를 설치합니다
+배포판 버전으로 충분하면 Ruby 전체 패키지를 설치합니다.
 
-    ```bash
-    sudo apt install ruby-full
-    ```
+```bash
+sudo apt update
+sudo apt install ruby-full build-essential
+ruby -v
+```
 
-1. 다음 명령어를 통해 루비가 설치됨과 버전을 확인합니다.
+[공식 패키지 설치 안내](https://www.ruby-lang.org/en/documentation/installation/)는 패키지 버전과 최신 Ruby 릴리스가 다를 수 있음을 설명합니다.
 
-    ```bash
-    ruby -v
-    ```
+## 현재 asdf 설치 방식
 
-## 인스톨러를 통해 설치하는 방법
+[asdf 시작 안내](https://asdf-vm.com/guide/getting-started.html)에 따라 Linux 아키텍처에 맞는 바이너리를 설치하고 shims 경로를 PATH에 추가합니다. 구형 `v0.14.1` 저장소 복제와 `asdf.sh` 로딩 절차를 현재 버전에 적용하지 않습니다.
 
-인스톨러를 통해 설치하는 방법은 원하는 Ruby 버전을 설치할 수 있으며 여러 버전 또한 함께 설치할 수 있습니다.
+Ubuntu 셸에서 asdf가 실행되는지 확인합니다.
 
-여러 인스톨러 중 `ruby-install` 을 이용하여 최신 버전을 설치해보겠습니다.
+```bash
+asdf version
+```
 
-1. 다음 명령어를 통해 `ruby-install`을 설치합니다
+## Ruby 플러그인과 설치 가능 버전
 
-    ```bash
-    sudo apt install ruby-install
-    ```
+[asdf-ruby](https://github.com/asdf-vm/asdf-ruby)의 빌드 의존성을 먼저 설치합니다. 그다음 플러그인을 추가하고 설치 가능한 버전을 확인합니다. 이미 플러그인이 있으면 추가 명령은 생략합니다.
 
-1. 최신 버전을 설치합니다.
+```bash
+asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+asdf list all ruby
+```
 
-    ```bash
-    ruby-install --latest
-    ```
+`asdf list ruby`는 설치된 버전을 보여 주므로 설치 가능한 전체 목록과 구분합니다.
 
-## 매니저를 통해 여러 버전을 설치하는 방법
+## 프로젝트 Ruby 버전 지정
 
-매니저를 이용하면 시스템에 설치된 루비 여러 버전을 전환할 수 있습니다.
+[asdf 버전 관리](https://asdf-vm.com/manage/versions.html)에 따라 프로젝트가 요구하는 정확한 버전을 설치하고 지정합니다. 다음은 구문 예제이며 `X.Y.Z`를 선택한 버전으로 바꿉니다.
 
-여러 매니저 중 asdf-vm 을 통해 설치해보겠습니다.
+```bash
+asdf install ruby X.Y.Z
+asdf set ruby X.Y.Z
+```
 
-1. 의존성 패키지를 설치합니다.
+기존 `asdf local`과 `asdf global` 대신 현재 명령을 사용합니다. 홈 기준 버전은 `asdf set -u ruby X.Y.Z`로 설정할 수 있습니다. 프로젝트의 `.tool-versions`, `.ruby-version`, Gemfile이 요구하는 버전도 함께 확인합니다.
 
-    ```bash
-    sudo apt install curl git
-    ```
+## 실행 파일과 Gem 환경 검증
 
-1. asdf를 다운로드합니다
+프로젝트 폴더에서 Ruby 실행 경로와 패키지 환경을 확인합니다. [RubyGems 안내](https://guides.rubygems.org/command-reference/#gem-environment)에 `gem environment`의 출력을 설명했습니다.
 
-    ```bash
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
-    ```
+```bash
+command -v ruby
+ruby -v
+gem environment
+```
 
-1. 쉘에서 명령어를 실행할 수 있도록 합니다
+Gemfile과 lock 파일이 있는 프로젝트는 [Bundler](https://bundler.io/guides/using_bundler_in_applications.html)에 따라 의존성을 설치하고 테스트를 실행합니다.
 
-    bash를 사용한다면 아래와 같이 실행합니다.
+## 설치 방식과 프로젝트 유지
 
-    ```bash
-    echo -e ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
-    ```
+여기까지 정리하면 Ubuntu 패키지로 Ruby를 시작하거나 asdf로 프로젝트 버전을 지정할 수 있습니다. 설치 직후에는 실행 파일과 의존성 설치를 확인하고 장기적으로는 프로젝트의 Ruby 버전과 lock 파일을 관리합니다.
 
-1. Ruby를 사용할 수 있도록 [asdf-ruby](https://github.com/asdf-vm/asdf-ruby) 플러그인을 추가합니다.
-
-    ```bash
-    asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-    ```
-
-1. 설치할 수 있는 Ruby 버전을 확인하고 설치합니다.
-
-    ```bash
-    asdf list ruby
-    ```
-
-    위의 명령어를 실행했을 때 나타나는 버전 목록 중 원하는 버전을 선택합니다. 여기서는 3.3.0 버전을 사용하여 설치한다고 가정하겠습니다.
-
-    ```bash
-    asdf install ruby 3.3.0
-    ```
-
-1. 프로젝트 내에서 사용할 Ruby 버전을 지정합니다.
-
-    ```bash
-    asdf local ruby 3.3.0
-    ```
-
-    전역으로 설치를 원한다면 아래 명령어를 실행합니다.
-
-    ```bash
-    asdf global ruby 3.3.0
-    ```
-
-## 소스를 빌드하여 설치하는 방법
-
-1. [Ruby 다운로드](https://www.ruby-lang.org/en/downloads/)를 통해서 원하는 버전을 다운로드합니다. 3.3.0 버전을 예로 들어 진행하겠습니다.
-
-1. 다운로드 받은 파일의 압축을 해제합니다.
-
-    ```bash
-    tar -xf ruby-3.3.0.tar.gz
-    ```
-
-1. 압축 해제된 폴더에 들어가 빌드합니다.
-
-    ```bash
-    ./configure
-    make
-    sudo make install
-    ```
+단일 실습 환경에는 APT를 사용할 수 있습니다. 여러 버전의 프로젝트를 함께 다룬다면 asdf 같은 버전 관리 도구를 적용합니다.

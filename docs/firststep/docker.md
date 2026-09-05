@@ -1,15 +1,54 @@
-# Docker 설치하기
+# Docker Desktop과 WSL 2 연동
 
-WSL 2부터는 Docker를 WSL 2 리눅스 안에 직접 설치할 수도 있지만, 이 방법보다는 Docker Desktop for Windows를 이용하는 것을 추천합니다. 이 방법을 사용하면 Docker를 컴퓨터 전체에 걸쳐 딱 한 번만 설치하고 WSL 안이든 밖이든 항상 동일한 환경을 유지하면서 사용할 수 있어 유용합니다.
+2026년 9월 5일 기준으로 Docker Desktop은 WSL 2 백엔드와 배포판 통합 기능을 제공합니다. 이 문서는 Windows에 Docker Desktop을 설치하는 구성을 다룹니다.
 
-Docker Desktop for Windows는 WSL v2 백엔드를 기본으로 사용하며, 별도의 Hyper-V VM 없이 WSL 2 환경에 직접 Docker 엔진을 실행하고 여러 WSL 배포판에 연결시켜줍니다.
+설치 조건, 백엔드 선택, 배포판 통합, 실행 검증, wslc와의 선택 기준을 설명합니다.
 
-## Docker Desktop for Windows 설치하기
+PowerShell에서 WSL 상태를 확인한 뒤 Docker Desktop과 Ubuntu 순서로 진행합니다. [Docker 공식 WSL 안내](https://docs.docker.com/desktop/features/wsl/)를 기준으로 작성했습니다.
 
-[Docker Desktop 공식 다운로드 페이지](https://www.docker.com/products/docker-desktop/)에서 최신 버전을 설치합니다.
+## WSL과 Windows 설치 조건
 
-## WSL 2 연동 상태 확인하고 설정하기
+PowerShell에서 현재 WSL과 배포판 상태를 확인합니다. Docker는 WSL 2.1.5 이상을 요구하며 최신 WSL 사용을 안내합니다. Windows 빌드와 아키텍처 조건은 [Docker Desktop 설치 문서](https://docs.docker.com/desktop/setup/install/windows-install/)에서 확인할 수 있습니다.
 
-Docker Desktop for Windows를 실행하고 나서 `Settings` -> `Resources` -> `WSL Integrations`로 이동하여 Docker Desktop과 연결하려는 배포판 앞의 스위치를 모두 켜줍니다.
+```powershell
+wsl.exe --update
+wsl.exe --version
+wsl.exe --list --verbose
+```
 
-![WSL 연동 설정 화면](images/wsl-integration.png)
+## Docker Desktop 설치와 백엔드
+
+[공식 설치 프로그램](https://docs.docker.com/desktop/setup/install/windows-install/)으로 설치한 뒤 Docker Desktop을 실행합니다. 설정의 General에서 `Use the WSL 2 based engine`을 선택합니다.
+
+Docker Desktop과 배포판 내부에 별도로 설치한 Docker Engine 또는 CLI가 충돌할 수 있습니다. [Docker WSL 안내](https://docs.docker.com/desktop/features/wsl/)에 따라 기존 설치와 데이터를 확인한 뒤 사용할 구성을 선택합니다. 회사에서 사용하는 경우 Docker Desktop 이용 조건은 설치 문서의 구독 안내를 기준으로 판단할 수 있습니다.
+
+## 사용할 배포판의 WSL Integration
+
+설정의 Resources에서 WSL Integration을 열어 개발에 사용할 배포판을 켜고 적용합니다. 해당 메뉴가 없다면 Linux 컨테이너 모드와 WSL 2 백엔드 상태를 확인합니다. [배포판 통합 절차](https://docs.docker.com/desktop/features/wsl/#turn-on-docker-desktop-wsl-2)를 참고할 수 있습니다.
+
+통합 후 Ubuntu 터미널을 새로 열어 다음 검증을 진행합니다.
+
+## 클라이언트와 서버 실행 검증
+
+Ubuntu에서 아래 명령을 실행합니다. `docker version`의 Client와 Server가 모두 응답하고 `hello-world`가 완료되는지 확인합니다.
+
+```bash
+docker version
+docker context show
+docker run --rm hello-world
+docker compose version
+```
+
+연결 오류가 나면 Desktop 실행 상태, 선택한 Docker context, 배포판 통합을 차례로 확인합니다. [Docker context 문서](https://docs.docker.com/engine/manage-resources/contexts/)에서 접속 대상을 구분하는 방법을 설명합니다.
+
+## 프로젝트 파일과 wslc 선택
+
+Linux 빌드 도구와 컨테이너 바인드 마운트를 사용할 프로젝트는 WSL 홈 아래에 둘 수 있습니다. [Docker의 WSL 파일 시스템 안내](https://docs.docker.com/desktop/features/wsl/)에서 경로에 따른 차이를 확인할 수 있습니다.
+
+다만 [wslc](wslc.md)는 WSL에 포함된 별도 컨테이너 CLI이며 현재 공개 미리 보기로 제공합니다. 기존 Compose 구성이나 Docker Engine API 연동의 동작을 확인한 뒤 전환 범위를 판단합니다.
+
+## 컨테이너 개발 환경의 유지
+
+여기까지 정리하면 Docker Desktop에서 선택한 WSL 배포판으로 Docker 명령을 실행할 수 있습니다. 설치 직후에는 서버 응답과 실습 컨테이너를 확인하고 장기적으로는 WSL과 Desktop의 지원 조건을 함께 관리합니다.
+
+기존 Docker 프로젝트에는 Desktop 통합을 사용할 수 있습니다. 내장 컨테이너 CLI 실험은 별도의 wslc 안내로 진행합니다.

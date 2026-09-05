@@ -1,151 +1,78 @@
-# WSL 2 네트워킹 설정하기
+# WSL 2 네트워크 모드와 연결 진단
 
-WSL 2는 기본적으로 NAT(Network Address Translation) 네트워크 모드를 사용하지만, 최근 버전에서는 **미러드 네트워킹 모드(Mirrored Networking Mode)** 및 **virtioProxy 모드** 등 향상된 네트워크 기능이 추가되었습니다.
+2026년 9월 5일 기준으로 Microsoft의 일반 WSL 설정 문서는 NAT를 기본 네트워크 모드로 안내합니다. Windows 11 버전 22H2 이상에서는 mirrored 모드와 DNS 터널링을 사용할 수 있습니다.
 
-## 네트워킹 모드 비교
+네트워크 모드, 설정 파일, 호스트 연결, VPN 진단, 컨테이너와의 범위를 다룹니다.
 
-| 모드 | 안정성 | 성능 | 호환성 | 권장 사용 |
-| --- | --- | --- | --- | --- |
-| NAT (기본) | 높음 | 보통 | 보통 | 일반 사용 |
-| mirrored | 안정 | 높음 | 높음 | VPN 사용, IPv6 필요 시 |
-| virtioProxy | 안정 | 매우 높음 | 매우 높음 | 최신 환경, 고성능 필요 시 |
+먼저 현재 연결을 확인하고 필요한 설정만 바꾼 뒤 같은 연결을 다시 시험합니다. [공식 네트워킹 안내](https://learn.microsoft.com/en-us/windows/wsl/networking)를 기준으로 작성했습니다.
 
-## 기본 네트워킹 모드 (NAT)
+## 모드별 적용 조건
 
-WSL 2의 기본 네트워크 모드는 NAT를 사용하여 Windows와 격리된 가상 네트워크 인터페이스를 생성합니다.
+[설정 참조](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#configuration-settings-for-wslconfig)에 명시한 차이를 정리하겠습니다. 모드 이름만으로 성능이나 모든 VPN의 호환성을 판단하지 않습니다.
 
-**장점:**
+| 모드 | 적용 조건 또는 동작 | 사용 시 확인할 항목 |
+| --- | --- | --- |
+| `nat` | 일반 WSL의 기본값 | Windows와 WSL의 IP 구분 |
+| `mirrored` | Windows 11 버전 22H2 이상 | IPv6, VPN, Hyper-V 방화벽 |
+| `virtioproxy` | WSL 2.3.25부터 NAT 실패 시 대체 경로 | 설치 버전과 실제 연결 |
+| `bridged` | WSL 2.4.5부터 사용 중단 대상으로 지정 | 기존 설정의 이전 |
 
-- 안정적이고 검증된 방식
-- 대부분의 일반적인 사용 사례에 적합
+VirtioProxy를 mirrored의 상위 호환 모드로 설명하지 않습니다. 네트워크 요구 조건과 문제 재현 결과를 기준으로 선택합니다.
 
-**제약 사항:**
+## mirrored와 DNS 설정
 
-- WSL에서 실행되는 서비스에 Windows 외부에서 직접 접근하기 어려움
-- 일부 VPN 소프트웨어와 호환성 문제 발생 가능
-- IPv6 지원 제한적
+Windows 사용자 프로필의 `.wslconfig`에서 기존 `[wsl2]` 섹션에 필요한 키를 병합합니다. [DNS와 프록시 옵션](https://learn.microsoft.com/en-us/windows/wsl/wsl-config)은 `[experimental]`에 두지 않습니다.
 
-## 미러드 네트워킹 모드
-
-2023년 9월 업데이트에서 도입된 미러드 네트워킹 모드는 Windows의 네트워크 인터페이스를 Linux로 그대로 미러링합니다. 현재는 안정 기능으로 전환되어 프로덕션 환경에서도 사용할 수 있습니다.
-
-**장점:**
-
-- IPv6 지원 개선
-- VPN 호환성 향상
-- localhost를 통한 더 나은 네트워크 접근성
-- Windows와 WSL 간 네트워크 구성 일관성
-
-**활성화 방법:**
-
-`.wslconfig` 파일(`$env:USERPROFILE\.wslconfig`)에 다음과 같이 추가합니다:
+아래 예제는 Windows 11 버전 22H2 이상의 mirrored 구성을 보여 줍니다.
 
 ```ini
 [wsl2]
 networkingMode=mirrored
-
-[experimental]
-autoMemoryReclaim=gradual
 dnsTunneling=true
 firewall=true
 autoProxy=true
 ```
 
-**추가 실험적 네트워크 옵션:**
+실행 중인 모든 WSL 작업을 저장한 뒤 PowerShell에서 `wsl.exe --shutdown`을 실행하고 배포판을 다시 엽니다. DNS 터널링을 사용할 때에는 배포판의 `/etc/wsl.conf`에서 `generateResolvConf=false`로 자동 생성을 막았는지도 확인합니다. 관련 조건은 [WSL 문제 해결](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)에 설명되어 있습니다.
 
-- `dnsTunneling=true`: DNS 요청 처리 방식 개선
-- `firewall=true`: Windows 방화벽 규칙을 WSL에도 적용
-- `autoProxy=true`: Windows의 프록시 설정을 WSL에 자동으로 적용
+## Windows와 Linux 서비스 연결
 
-설정 후 WSL을 재시작합니다:
+Windows 브라우저에서는 WSL 개발 서버의 `http://localhost:포트`로 접속할 수 있습니다. 반대로 WSL에서 Windows 서버로 연결할 때 NAT에서는 호스트 IP를 사용하고 mirrored에서는 IPv4 `127.0.0.1` 연결을 사용할 수 있습니다. [접속 방향별 안내](https://learn.microsoft.com/en-us/windows/wsl/networking)를 기준으로 구분합니다.
 
-```powershell
-wsl.exe --shutdown
+Ubuntu에서 NAT 기본 경로의 호스트 주소를 확인합니다.
+
+```bash
+ip route show default
 ```
 
-> 참고: 미러드 네트워킹 모드는 현재 안정 기능으로 전환되었으며, 대부분의 환경에서 안정적으로 동작합니다. 다만 일부 특수한 네트워크 구성에서는 예상치 못한 동작이 발생할 수 있습니다.
+LAN의 다른 컴퓨터에서 접속하려면 서버의 수신 주소, 포트 공개, Windows와 Hyper-V 방화벽을 함께 구성합니다. 방화벽 전체를 비활성화하는 방법을 기본 절차로 사용하지 않습니다.
 
-## virtioProxy 네트워킹 모드
+## VPN과 프록시 문제 진단
 
-2024년 후반부터 도입된 virtioProxy 모드는 미러드 모드의 개선판으로, virtio 프로토콜을 기반으로 Windows와 WSL 간의 네트워크 통신을 더욱 효율적으로 처리합니다. 현재는 안정 기능으로 사용할 수 있습니다.
+이어서 DNS 해석과 HTTPS 연결을 나누어 확인합니다. Ubuntu에서 다음 명령을 실행한 뒤 VPN 연결 전후의 결과를 비교합니다.
 
-**장점:**
-
-- 미러드 모드의 모든 장점 포함
-- 더 나은 네트워크 성능 및 처리량
-- 낮은 지연 시간 (latency)
-- 더 안정적인 네트워크 연결
-- 향상된 멀티플렉싱 지원
-
-**활성화 방법:**
-
-`.wslconfig` 파일에 다음과 같이 설정합니다:
-
-```ini
-[wsl2]
-networkingMode=virtioproxy
-
-[experimental]
-autoMemoryReclaim=gradual
-dnsTunneling=true
-firewall=true
-autoProxy=true
+```bash
+getent ahosts learn.microsoft.com
+curl -I https://learn.microsoft.com/
 ```
 
-> 참고: virtioProxy는 mirrored 모드보다 더 최신 기능이므로, 최신 버전의 WSL이 필요합니다. `wsl.exe --version`으로 버전을 확인하세요.
+DNS만 실패하면 터널링과 `/etc/resolv.conf` 생성 설정을 확인합니다. DNS는 성공하지만 HTTPS가 실패하면 프록시, 신뢰 인증서, 방화벽을 확인합니다. 적용한 키만 이전 값으로 복원하고 WSL을 재시작하면 변경 전후를 비교할 수 있습니다. [공식 문제 해결 문서](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)에 알려진 VPN 제약을 정리했습니다.
 
-**주의사항:**
+## Docker와 wslc의 구분
 
-- 아직 일부 특수한 네트워크 환경에서 호환성 문제가 있을 수 있으며, 문제 발생 시 mirrored 또는 NAT 모드로 전환할 수 있습니다
-- WSL GitHub 이슈 트래커를 통해 문제를 보고할 수 있습니다
+[Docker Desktop의 WSL 백엔드](https://docs.docker.com/desktop/features/wsl/)는 제품 자체의 네트워크 설정도 사용합니다. Podman이나 Docker가 모든 WSL 모드에서 같은 방식으로 동작한다고 단정하지 않습니다.
 
-**모드 변경 시:**
+다만 [WSL 컨테이너 공개 미리 보기](https://devblogs.microsoft.com/commandline/wsl-container-is-now-available-for-public-preview/)의 consomme 기본 네트워킹은 컨테이너에 대해 발표한 변경입니다. 일반 배포판의 모드를 바꾸는 절차와 [wslc 실습](wslc.md)을 구분해 적용합니다.
 
-네트워킹 모드를 변경한 후에는 반드시 WSL을 재시작해야 합니다:
+## 연결 변경 후 점검
 
-```powershell
-wsl.exe --shutdown
-```
+1. DNS 해석과 HTTPS 접속을 각각 확인합니다.
+2. Windows에서 WSL 개발 서버로 접속합니다.
+3. 필요한 경우 WSL에서 Windows 서버로 접속합니다.
+4. VPN을 사용하는 상태에서 같은 작업을 반복합니다.
 
-## 컨테이너 런타임 호환성
+## 환경별 네트워크 선택
 
-### Podman Desktop
+여기까지 정리하면 WSL 네트워크는 접속 방향과 Windows 버전에 따라 설정이 달라집니다. 변경 직후에는 실제 개발 서버와 VPN 연결을 확인하고 장기적으로는 사용 중인 컨테이너 도구의 지원 조건을 함께 관리합니다.
 
-Podman Desktop을 사용하는 경우 네트워킹 모드 선택 시 주의가 필요합니다:
-
-- ✅ **NAT 모드**: 완전히 지원됨
-- ✅ **virtioProxy 모드**: 완전히 지원됨 (권장)
-- ⚠️ **mirrored 모드**: 제대로 지원되지 않음
-
-> Podman Desktop 사용자는 mirrored 모드 대신 virtioProxy 또는 NAT 모드를 사용하세요. mirrored 모드에서는 컨테이너 네트워크가 정상적으로 작동하지 않을 수 있습니다.
-
-### Docker Desktop
-
-Docker Desktop의 경우 모든 네트워킹 모드를 지원하지만, 성능을 위해서는 virtioProxy 또는 mirrored 모드를 권장합니다.
-
-## VPN 사용 시 문제 해결
-
-일부 VPN 소프트웨어(특히 Cisco AnyConnect 등)는 WSL의 NAT 네트워크와 충돌할 수 있습니다.
-
-**해결 방법:**
-
-1. **virtioProxy 모드 사용** (최신 WSL이 있는 경우)
-   - `.wslconfig`에 `networkingMode=virtioproxy` 설정
-
-2. **미러드 네트워킹 모드 사용**
-   - 위에서 설명한 대로 `.wslconfig`에 `networkingMode=mirrored` 설정
-
-3. **VPN 설정 조정**
-   - Cisco AnyConnect의 경우: [공식 문서](https://www.cisco.com/c/en/us/support/docs/security/anyconnect-secure-mobility-client/215672-configure-anyconnect-to-work-with-wsl.html) 참고
-
-4. **프록시 자동 미러링 활성화**
-   - `.wslconfig`에 `autoProxy=true` 추가
-
-## 추가 리소스
-
-- [Microsoft Learn - WSL 네트워킹](https://learn.microsoft.com/windows/wsl/networking)
-- [WSL Troubleshooting - 네트워크 문제](https://learn.microsoft.com/windows/wsl/troubleshooting#networking-issues)
-- [WSL .wslconfig 설정 가이드](https://learn.microsoft.com/windows/wsl/wsl-config#wslconfig)
-- [WSL September 2023 Update](https://devblogs.microsoft.com/commandline/windows-subsystem-for-linux-september-2023-update/)
-- [WSL May 2024 Update](https://devblogs.microsoft.com/commandline/whats-new-in-the-windows-subsystem-for-linux-in-may-2024/)
-- [WSL GitHub Releases](https://github.com/microsoft/WSL/releases)
+현재 NAT에서 문제가 없다면 그 구성을 유지할 수 있습니다. IPv6나 호스트 연결 요구가 있는 Windows 11 환경에서는 mirrored를 적용한 뒤 실제 연결 결과로 판단합니다.

@@ -1,115 +1,65 @@
-# OpenJDK 설치하기
+# Ubuntu에서 OpenJDK와 Java 빌드 도구 설치
 
-## OpenJDK 설치 방법
+2026년 9월 5일 기준으로 Ubuntu는 기본 JDK와 버전별 OpenJDK 패키지를 제공합니다. 프로젝트마다 요구하는 Java 버전이 다를 수 있습니다.
 
-Ubuntu의 패키지 매니저를 통해 OpenJDK를 설치할 수 있습니다. 장기 지원(LTS) 버전인 OpenJDK 21을 설치하는 것을 권장합니다.
+JDK 선택, 설치 확인, JAVA_HOME, Maven, Gradle Wrapper를 설명합니다.
 
-```bash
-sudo apt -y install openjdk-21-jdk
-```
+Ubuntu 터미널에서 프로젝트 설정을 확인한 뒤 필요한 JDK를 설치합니다. [Ubuntu Java 안내](https://help.ubuntu.com/community/Java)를 참고할 수 있습니다.
 
-OpenJDK 17 LTS 버전을 설치하려는 경우에는 다음과 같이 실행할 수 있습니다.
+## 프로젝트에 맞는 JDK 선택
 
-```bash
-sudo apt -y install openjdk-17-jdk
-```
-
-> 참고: 여러 JDK 버전을 관리하려면 [SDKMAN](https://sdkman.io/)을 사용하는 것도 좋은 방법입니다.
->
-> 다만, `curl ... | bash`와 같이 원격 스크립트를 바로 셸에 파이프로 넘겨 실행하는 방식은 보안상 위험할 수 있습니다. 설치 전에 스크립트 내용을 직접 확인하거나, SDKMAN 공식 문서에서 안내하는 최신 설치/검증 절차를 따르는 것을 권장합니다.
->
-> ```bash
-> # 설치 스크립트를 먼저 내려받고 내용을 확인한 뒤 실행하는 예시입니다.
-> curl -s "https://get.sdkman.io" -o install-sdkman.sh
-> less install-sdkman.sh   # 내용 확인 후 실행 여부를 결정하세요.
-> bash install-sdkman.sh
-> source "$HOME/.sdkman/bin/sdkman-init.sh"
-> sdk install java 21.0.2-tem
-> ```
-
-## JAVA_HOME 환경 변수 설정
-
-1. 환경 변수를 `~/.bashrc` 또는 `~/.zshrc` 파일에 설정합니다. 아래의 줄을 파일 가장 마지막에 추가합니다. 여기서는 OpenJDK 21 버전을 설치했다고 가정하겠습니다. 다른 버전을 설치한 경우 21 대신 적절한 버전 번호를 대신 지정합니다.
-
-   ```bash
-   export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))))
-   export PATH=$PATH:$JAVA_HOME/bin
-   ```
-
-   > 참고: 위 명령은 설치된 JDK의 실제 경로를 자동으로 감지합니다. 수동으로 지정하려면 amd64 환경에서는 `/usr/lib/jvm/java-21-openjdk-amd64`, arm64 환경에서는 `/usr/lib/jvm/java-21-openjdk-arm64`를 사용합니다.
-
-1. 환경 변수를 다시 불러오기 위하여 `~/.bashrc` 또는 `~/.zshrc` 파일을 다시 로드하거나, 새로운 터미널 창을 엽니다.
-
-    ```bash
-    source ~/.bashrc
-    # 또는
-    source ~/.zshrc
-    ```
-
-1. 제대로 설치되었는지 확인하기 위하여 아래 명령어를 실행합니다.
-
-    ```bash
-    java -version
-    javac -version
-    ```
-
-## Maven 설치하기
-
-복잡한 환경 변수 설정 없이, 우분투의 패키지 관리자로 쉽게 Maven을 설치할 수 있습니다.
+별도 버전 요구가 없다면 Ubuntu의 `default-jdk`를 설치할 수 있습니다. JDK 21이 필요한 프로젝트는 `openjdk-21-jdk`의 설치 후보를 확인해 선택합니다. [Ubuntu 패키지 목록](https://packages.ubuntu.com/search?keywords=openjdk)에서 지원하는 릴리스를 확인합니다.
 
 ```bash
-sudo apt -y install maven
+sudo apt update
+apt-cache policy default-jdk openjdk-21-jdk
+sudo apt install default-jdk
 ```
 
-## Gradle 설치하기
+## java와 javac 버전 확인
 
-1. 설치하려는 Gradle의 버전을 https://gradle.org/releases/ 페이지에서 먼저 확인합니다.
+Ubuntu에서 런타임과 컴파일러가 의도한 버전을 사용하는지 확인합니다. 여러 버전을 설치한 경우 [Ubuntu alternatives](https://manpages.ubuntu.com/manpages/noble/en/man1/update-alternatives.1.html)로 선택을 관리할 수 있습니다.
 
-1. 여기서는 8.12 버전을 설치한다고 가정하고 아래 명령어를 실행하겠습니다.
+```bash
+java -version
+javac -version
+readlink -f "$(command -v javac)"
+```
 
-   ```bash
-   sudo apt -y install zip
+## JAVA_HOME 설정
 
-   pushd /tmp
-   wget https://services.gradle.org/distributions/gradle-8.12-bin.zip
-   sudo unzip -d /opt/gradle /tmp/gradle-*.zip
-   popd
-   ```
+도구가 JAVA_HOME을 요구하면 실제 컴파일러 경로를 기준으로 설정합니다. 아래 내용은 Ubuntu 패키지로 설치한 JDK를 가정하며 셸 설정 파일에 추가할 수 있습니다. [Maven 설치 안내](https://maven.apache.org/install.html)에 JDK 환경 조건을 설명했습니다.
 
-1. 설치한 Gradle의 정확한 디렉터리를 확인합니다. `8.12` 부분을 정확한 버전 번호로 지정하면 바로 디렉터리를 찾을 수 있습니다.
+```bash
+export JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v javac)")")")"
+export PATH="$JAVA_HOME/bin:$PATH"
+```
 
-   ```bash
-   ls /opt/gradle/gradle-8.12
-   ```
+## Maven 설치 또는 프로젝트 Wrapper
 
-1. `GRADLE_HOME` 환경 변수를 정확하게 설정하기 위해 아래 명령어로 셸 스크립트 파일을 만듭니다.
+[Maven](https://maven.apache.org/install.html)을 Ubuntu 패키지로 설치하고 버전을 확인합니다. 프로젝트에 `mvnw`가 있다면 해당 Wrapper의 사용 절차를 적용할 수 있습니다.
 
-   ```bash
-   sudo mkdir -p /etc/profile.d/
-   sudo nano /etc/profile.d/gradle.sh
-   ```
+```bash
+sudo apt install maven
+mvn -version
+```
 
-1. 다음의 코드를 추가하고 파일을 저장합니다. 만약 기존에 이미 내용이 있다면 버전 번호만 바꾸고 저장합니다.
+## Gradle Wrapper로 프로젝트 실행
 
-   ```bash
-   export GRADLE_HOME=/opt/gradle/gradle-8.12
-   export PATH=${GRADLE_HOME}/bin:${PATH}
-   ```
+[Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html)가 있는 프로젝트는 지정한 Gradle 버전을 사용합니다. 오래된 전역 Gradle ZIP 설치 예제를 그대로 적용할 필요 없이 프로젝트가 선언한 버전을 확인할 수 있습니다.
 
-1. 실행 권한을 셸 스크립트에 부여합니다.
+신뢰하는 프로젝트의 루트에서 Wrapper 설정과 실행 결과를 확인합니다.
 
-   ```bash
-   sudo chmod +x /etc/profile.d/gradle.sh
-   ```
+```bash
+cat gradle/wrapper/gradle-wrapper.properties
+./gradlew --version
+./gradlew build
+```
 
-1. 셸 스크립트 파일을 다시 불러옵니다.
+Wrapper가 없다면 [Gradle 설치 안내](https://docs.gradle.org/current/userguide/installation.html)에 따라 프로젝트와 JDK가 지원하는 버전을 설치합니다.
 
-   ```bash
-   source /etc/profile.d/gradle.sh
-   ```
+## Java 도구 선택의 기준
 
-1. 제대로 설치가 되었는지 다시 확인해봅니다.
+여기까지 정리하면 JDK 설치와 실제 컴파일러 경로를 확인하고 프로젝트의 빌드 도구를 실행할 수 있습니다. 설치 직후에는 빌드 성공 여부를 확인하고 장기적으로는 JDK와 Wrapper 버전의 호환성을 관리합니다.
 
-   ```bash
-   gradle -v
-   ```
+새 실습에는 Ubuntu 기본 JDK를 사용할 수 있습니다. 기존 프로젝트에는 해당 프로젝트가 요구하는 JDK와 빌드 도구 버전을 적용합니다.

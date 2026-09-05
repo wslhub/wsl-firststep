@@ -1,111 +1,63 @@
-# WSL 2 시간 동기화 문제 해결하기
+# WSL 2 시간 차이 진단과 복구
 
-WSL 2의 경우, 특정 조건(예: 절전모드/하이버네이션 후 복귀)에서 시스템 시간이 Windows와 동기화되지 않는 문제가 발생할 수 있습니다.
-이로 인해 패키지 저장소 업데이트 중 오류가 발생하거나, SSL 인증서 검증 오류, Git 커밋 생성 시 시간이 꼬이는 등 다양한 문제가 발생할 수 있습니다.
+2026년 9월 5일 기준으로 Ubuntu on WSL은 Hyper-V의 시간 동기화와 배포판의 시간 서비스 구성을 함께 사용합니다. 절전 복귀 후 시간 차이가 발생하면 Windows와 Linux의 실제 시각부터 비교합니다.
 
-2019년부터 관련 이슈가 여러 번 제기되었으며, 사용 환경(Windows 버전, WSL 버전, systemd 활성화 여부 등)에 따라 재현성과 증상이 다를 수 있습니다. 본 문서를 통해 문제 해결 방법을 알아봅니다.
+UTC 시각 비교, WSL 재시작, systemd 확인, 배포판별 NTP 동작, 오류 기록을 다룹니다.
 
-> 참고: WSL 0.67.6 이상과 systemd를 활성화한 환경에서는 시간 동기화가 안정적으로 동작합니다. `wsl.exe --version`으로 현재 WSL 버전을 확인하세요.
+시간대 표시 차이와 실제 시계 오차를 구분한 뒤 재현되는 조건을 확인합니다. [Canonical 시간 동기화 문서](https://ubuntu.com/wsl/docs/stable/explanation/time-sync/)를 기준으로 작성했습니다.
 
-* [WSL2: Clock skewed? #4677](https://github.com/microsoft/WSL/issues/4677)
-* [WSL2 - clock problems during build #4975](https://github.com/microsoft/WSL/issues/4975)
-* [WSL2 Ubuntu, time stopped. #5184](https://github.com/microsoft/WSL/issues/5184)
-* [WSL2 date incorrect after waking from sleep #5324](https://github.com/microsoft/WSL/issues/5324)
+## Windows와 Linux의 UTC 시각
 
-## 시간 동기화 명령 실행하기
+PowerShell에서 Windows와 대상 배포판의 UTC 시각을 연속으로 출력합니다. 배포판 이름은 실제 이름으로 바꿉니다.
 
-### 하드웨어 시간과 동기화
-
-하드웨어 시간을 시스템에 적용하려면 `hwclock`명령을 사용합니다 하드웨어 시간(`h`)를 시스템(`sys`) 에 적용할 것이므로, `--htosys` 인자를 사용합니다. 축약된 인자인 `-s` 를 대신 사용할 수도 있습니다.
-
-```bash
-sudo hwclock --htosys
-# sudo hwclock -s
+```powershell
+[DateTime]::UtcNow.ToString('o')
+wsl.exe -d Ubuntu-26.04 -- date -u --iso-8601=seconds
 ```
 
-### 타임 서버와 동기화 (systemd 미사용 환경)
+[WSL의 Windows 시간대 설정](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#time-settings)은 시간대와 관련된 옵션입니다. 시간대가 같은지와 시계가 동기화되어 있는지는 구분해 판단합니다.
 
-`chrony`를 이용하여 시간 서버와 동기화하는 방법도 있습니다. 아래 명령으로 `chrony`를 설치합니다.
+## 업데이트와 배포판 재시작
 
-```bash
-sudo apt -y install chrony
+실제 시계 오차가 크면 Windows의 날짜 및 시간 설정에서 동기화 상태를 확인합니다. 실행 중인 WSL 작업을 저장한 뒤 PowerShell에서 WSL을 업데이트하고 재시작합니다.
+
+```powershell
+wsl.exe --update
+wsl.exe --shutdown
+wsl.exe -d Ubuntu-26.04 -- date -u --iso-8601=seconds
 ```
 
-systemd를 사용하지 않는 경우, 서비스를 수동으로 시작합니다:
+[종료 명령](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#shutdown)은 실행 중인 일반 WSL 배포판 전체에 영향을 줍니다. 재시작 후에도 오차가 반복되면 다음 정보를 기록합니다.
+
+## systemd와 시간 서비스 상태
+
+Ubuntu에서 실행 중인 init과 시간 서비스를 확인합니다. [systemd 지원](https://learn.microsoft.com/en-us/windows/wsl/systemd)이 가능하다는 사실만으로 시간 오류가 모두 해결되었다고 판단하지 않습니다.
 
 ```bash
-sudo service chrony start
+ps -p 1 -o comm=
+systemctl status chrony.service systemd-timesyncd.service --no-pager
 ```
 
-## systemd를 사용하는 경우 (권장)
+설치하지 않은 서비스의 `not found`나 비활성 상태는 그 자체로 시간 오류의 증거가 되지 않습니다. 원인에 맞는 서비스만 진단합니다.
 
-WSL 0.67.6 이상과 Ubuntu 22.04 이상을 사용하는 경우, systemd가 기본으로 활성화됩니다. systemd가 활성화된 환경에서는 시간 동기화가 더 안정적으로 동작합니다.
+## Ubuntu 릴리스별 동기화 동작
 
-systemd 환경에서는 `systemd-timesyncd` 또는 `chrony`를 systemd 서비스로 관리할 수 있습니다:
+[Canonical 안내](https://ubuntu.com/wsl/docs/stable/explanation/time-sync/#interacting-with-ntp-clients-in-ubuntu-on-wsl)에 따르면 Ubuntu 25.10부터 기본 NTP 클라이언트를 chrony로 전환했습니다. WSL에서는 기본 chrony 구성이 시간 차이를 관찰하더라도 시계를 조정하지 않을 수 있습니다. 이전 릴리스의 systemd-timesyncd 구성과 구분합니다.
 
-```bash
-# systemd-timesyncd 사용 (Ubuntu 기본)
-sudo systemctl enable systemd-timesyncd
-sudo systemctl start systemd-timesyncd
-sudo systemctl status systemd-timesyncd
-```
+다만 Hyper-V 동기화와 다른 NTP 서버를 동시에 사용하면 시계 조정이 충돌할 수 있습니다. 모든 환경에 chrony와 systemd-timesyncd를 함께 켜거나 셸을 열 때마다 root로 시간을 수정하는 명령을 넣지 않습니다. 수동 NTP가 필요한 환경에서는 공식 문서의 컨테이너 동기화 옵션과 조직의 시간 서버를 기준으로 구성합니다.
 
-또는 chrony를 사용하려면:
+## 반복 오류에 대한 진단 자료
 
-```bash
-sudo apt -y install chrony
-sudo systemctl enable chrony
-sudo systemctl start chrony
-sudo systemctl status chrony
-```
+[WSL 문제 해결 문서](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)와 [시간 오차 추적 이슈](https://github.com/microsoft/WSL/issues/10006)를 참고해 아래 정보를 기록할 수 있습니다.
 
-## 시간 동기화 명령 자동 실행 (레거시: systemd 미사용 환경)
+- Windows 빌드와 WSL 패키지 버전
+- Ubuntu 릴리스와 PID 1
+- Windows와 Linux의 UTC 시각 차이
+- 절전 또는 최대 절전 모드의 복귀 시점
+- 재시작 전후 결과와 사용 중인 NTP 서비스
 
-> 아래 방법은 systemd를 사용하지 않는 구형 WSL 환경에서만 필요합니다. systemd가 활성화된 환경(WSL 0.67.6 이상 + Ubuntu 22.04 이상)에서는 위의 systemd 기반 방법을 사용하세요.
+## 복구 결과와 재현 조건
 
-systemd를 사용하지 않는 환경에서는 셸 프로필 파일을 통해 시간 동기화를 자동 실행하도록 설정할 수 있습니다.
+여기까지 정리하면 실제 시각 차이와 배포판 시간 서비스의 동작을 구분해 진단할 수 있습니다. 즉시 복구는 Windows 동기화와 WSL 재시작으로 확인하고 반복 증상은 절전 복귀 조건과 로그로 추적합니다.
 
-### `.bashrc`, `.zshrc` 등 셸 프로필 파일 수정
-
-가장 쉬운 방법은 각 CLI 셸이 사용하는 `.*rc` 파일(`bash`->`.bashrc`, `zsh`->`.zshrc`, `fish`->`.fishrc`) 을 수정하여 가장 마지막 줄에 명령줄을 추가하는 방법입니다.
-
-아래와 같이 루트 권한 상승이 필요한 명령을 그대로 넣으면, 매번 셸을 새로 열 때 마다 암호를 입력해야 해서 번거롭습니다.
-WSL에서는 Windows의 명령이나 셸을 뒤에 `.exe`를 붙여 바로 실행이 가능합니다. 이를 활용하여 Windows에서 사용하는 명령인 `wsl`을
-`wsl.exe` 로 실행합니다. `wsl` 로 명령 실행시 WSl 환경에서 실행할 명령과 명령을 실행할 계정을 지정하여 해당 계정 암호 입력 없이 바로 실행이 가능합니다.
-
-그러므로, 아래와 같이 루트 계정으로 암호 입력 없이 원하는 명령을 실행할 수 있습니다.
-
-```bash
-wsl.exe -u root -e <실행할 명령>
-```
-
-이제 이를 이용하여 아래와 같은 내용을 `.bashrc`, `.zshrc` 등 파일의 마지막 줄에 추가합니다.
-
-```bash
-# hwclock 명령 사용시
-wsl.exe -u root -e hwclock -s
-
-# chrony 사용시
-wsl.exe -u root -e service chrony start
-```
-
-### Windows 작업 스케줄러 활용
-
-Windows 작업 스케줄러를 설정하여 잠금 해제 할 때 마다 명령을 실행하도록 설정도 가능합니다.
-다만 명령 실행을 위해 명령 프롬프트 창이 잠깐 나왔다 사라져서 조금 거슬릴 수 있습니다.
-
-* 시작 메뉴에서 *작업 스케줄러*를 검색하여 실행합니다.
-* *작업*에서 *작업 만들기...*를 클릭하여 새 작업을 생성합니다.
-* *트리거* 탭으로 가서 *새로 만들기...*를 누릅니다.
-  * *작업 시작* 조건을 *워크스테이션 잠금 해제 시*로 선택하고 *확인*을 누릅니다.
-* *동작* 탭으로 가서 *새로 만들기...*를 누릅니다.
-  * *동작*을 *프로그램 시작으로 설정합니다.
-  * `hwclock` 명령을 실행하도록 하려면 다음과 같이 합니다.
-    * *프로그램/스크립트*에 `wsl` 입력
-    * *인수 추가(옵션)*에 `-u root -e hwclock -s`를 입력
-  * `chrony` 데몬이 시작되도록 하려면 다음과 같이 합니다.
-    * *프로그램/스크립트*에 `wsl` 입력
-    * *인수 추가(옵션)*에 `-u root -e service chrony start`를 입력
-  * 다 입력했다면 *확인*을 누릅니다.
-* *확인*을 눌러 저장합니다.
-* 이제 잠금 해제 할 때 마다 시간 동기화 명령이 실행됩니다.
+기본 동기화가 정상이라면 별도 NTP 설정을 추가하지 않아도 됩니다. 관리형 시간 서버가 필요한 환경은 Windows와 Linux의 시간 공급원을 함께 구성합니다.

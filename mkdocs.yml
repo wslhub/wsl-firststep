@@ -1,29 +1,43 @@
 site_name: "WSL 시작하기"
+site_url: https://wslhub.com/wsl-firststep/
+repo_url: https://github.com/wslhub/wsl-firststep
+edit_uri: edit/master/docs/
 theme:
   name: material
-  language: kr
+  language: ko
   logo: images/favicon.png
   favicon: images/favicon.png
   features:
     - navigation.instant
     - navigation.tabs
     - search.suggest
+    - content.code.copy
 plugins:
-  - search:
-      prebuild_index: true
-extra:
-  disqus: wsl-firststep
+  - search
 markdown_extensions:
   - meta
   - footnotes
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+  links:
+    not_found: warn
+    unrecognized_links: warn
+    anchors: warn
 nav:
   - 홈:
     - index.md
+    - WSL 최신 변경 사항: firststep/latest.md
   - 처음에 할 일:
     - firststep/install.md
     - firststep/ubuntu.md
     - firststep/winterm.md
     - firststep/docker.md
+    - WSL 컨테이너와 wslc: firststep/wslc.md
     - firststep/vscode.md
     - firststep/sshkey.md
     - firststep/networking.md
@@ -35,6 +49,7 @@ nav:
     - devsetup/dotnet.md
     - devsetup/golang.md
     - devsetup/ruby.md
+  - Windows Terminal 치트시트:
     - devsetup/multiplexer.md
   - 고급 가이드:
     - advanced/install-from-rootfs.md

@@ -1,130 +1,111 @@
-# WSL 배포판 복사하기
+# WSL 배포판 복사와 복원
 
-기본적으로 Microsoft Store를 통하거나 정식 설치 프로그램을 통하여 배포판을 설치하면, 미리 지정된 배포판 이름으로만 고정하여 설치가 가능한 제약 사항이 있습니다. 이런 제약 사항을 피하기 위해서는 배포판을 복사해야하는데, 이 가이드에서는 배포판을 복사하여 설치하는 방법을 설명합니다.
+2026년 9월 5일 기준으로 WSL은 기존 배포판을 내보낸 뒤 새 이름으로 가져오는 기능을 제공합니다. 아래 절차는 원본을 유지하면서 같은 컴퓨터에 복사본을 만듭니다.
 
-> ⚠️ **경고**
->
-> 이 가이드의 내용을 응용하여 다른 컴퓨터로 배포판을 백업하고 복원할 수도 있습니다. 단, 배포판을 복사하여 전송하기 전에 반드시 민감한 정보 (예: SSH 비밀 키, `bash`나 `zsh` 등의 셸이 남기는 명령어 히스토리 파일 등)는 미리 삭제한 후 백업하는 것을 권장합니다.
->
-> WSL v1의 경우 확장된 NTFS 파일 시스템을 사용하기 때문에, 여러가지 요인들로 인하여 메타데이터가 손상될 수 있고, 때에 따라서는 WSL 배포판의 데이터가 소실되는 문제가 발생할 수 있습니다. WSL v1을 주로 사용할 경우 배포판을 내보내거나 가져오는 것과는 별개로 중요한 데이터는 실행 가능한 상태일 때 추가로 백업하는 것을 추천합니다.
+원본 확인, 내보내기, 해시 대조, 가져오기, 기본 사용자 설정과 복원 검증을 다룹니다.
 
-## 배포판 내보내기
+PowerShell에서 파일 작업을 진행하며 Linux 설정은 대상 배포판 안에서 편집합니다. 다른 컴퓨터로 옮길 때에도 같은 절차를 응용할 수 있습니다.
 
-의도하지 않은 입출력 오류로 인하여 배포판이 손상되는 것을 막기 위해, WSL 시스템 전체를 먼저 종료해야 합니다.
+## 원본과 복사본의 범위
 
-```powershell
-wsl.exe --shutdown
-```
+복사할 대상을 먼저 정리하겠습니다. [WSL 내보내기와 가져오기](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#export-a-distribution)는 배포판의 파일 시스템을 다룹니다. Windows의 `.wslconfig`, Windows Terminal 설정, `/mnt/c` 같은 외부 마운트의 데이터는 별도로 보관합니다.
 
-그 다음, 내보내려는 배포판의 이름을 확인합니다.
+PowerShell에서 배포판 이름을 확인합니다.
 
 ```powershell
 wsl.exe --list --verbose
 ```
 
-내보내려는 배포판의 이름을 확인한 후, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-24.04` 배포판을 사용자 홈 디렉토리에 내보내는 것을 가정하겠습니다.
+아래 예제는 `Ubuntu-26.04`에서 `MyUbuntu`를 만듭니다. 이름과 경로는 실제 환경에 맞게 바꿉니다. 데이터베이스 등은 애플리케이션의 백업 또는 정상 종료 절차를 먼저 적용하면 복원 시 불일치를 줄일 수 있습니다. 백업에는 SSH 비밀 키, 토큰, 셸 기록도 포함될 수 있으며 다른 사람과 공유할 이미지라면 별도의 정리된 배포판에서 준비합니다.
+
+## 대상 배포판 종료와 내보내기
+
+원본의 작업을 저장하고 해당 배포판을 종료합니다. `--terminate`는 지정한 배포판을 즉시 종료하므로 저장되지 않은 작업에 영향을 줍니다. [명령 참조](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#terminate)에서 `--shutdown`과의 범위를 비교할 수 있습니다.
+
+아래 예제는 기존 백업을 덮어쓰지 않도록 새 디렉터리를 생성하며 실패한 명령 뒤에는 중단합니다.
 
 ```powershell
-wsl.exe --export Ubuntu-24.04 $env:USERPROFILE\Ubuntu-24.04.tar
+$ErrorActionPreference = 'Stop'
+$BackupDir = Join-Path $env:USERPROFILE 'WSL-Backups\Ubuntu-26.04-copy'
+New-Item -ItemType Directory -Path $BackupDir -ErrorAction Stop | Out-Null
+$Archive = Join-Path $BackupDir 'Ubuntu-26.04.tar'
+wsl.exe --terminate Ubuntu-26.04
+if ($LASTEXITCODE -ne 0) { throw '배포판 종료에 실패했습니다.' }
+wsl.exe --export Ubuntu-26.04 "$Archive"
+if ($LASTEXITCODE -ne 0) { throw '배포판 내보내기에 실패했습니다.' }
+(Get-FileHash -Algorithm SHA256 -LiteralPath $Archive).Hash |
+    Set-Content -Encoding ascii -LiteralPath "$Archive.sha256"
+Get-Item -LiteralPath $Archive
 ```
 
-배포판의 크기, 디스크 입출력 속도, 그리고 WSL 버전에 따라 차이가 있을 수 있으며, 시간이 오래 걸리는 작업이므로 완료될 때까지 다른 WSL 배포판을 실행하지 않도록 주의합니다.
+원본 데이터, 아카이브, 복사본을 함께 보관할 여유 공간을 확보하면 됩니다. WSL이 내보내는 동안 원본을 다시 실행하지 않습니다.
 
-또한 기존 배포판이 차지하는 공간만큼 추가 디스크 공간이 필요하므로, 디스크 공간이 여유가 없을 경우 별도의 외부 저장 장치를 사용하여 백업을 진행하는 것을 권장합니다.
+## 해시 대조와 새 이름으로 가져오기
 
-백업이 끝나면 파일이 잘 만들어졌는지 확인합니다.
+[Get-FileHash](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/get-filehash)는 파일 변경 여부를 대조하는 데 사용합니다. 해시 일치는 전송 중 변경이 없다는 증거이며 파일 제공자의 신뢰성까지 증명하지는 않습니다.
 
-```powershell
-dir $env:USERPROFILE\Ubuntu-24.04.tar
-```
-
-또한 만들어진 백업 파일이 오염되거나 편집되는 것을 막기 위하여, SHA256 해시를 생성하여 기록해두었다가, 나중에 사용할 때 대조하는 것을 강력히 권장합니다. 해시를 만들기 위하여 PowerShell에서 다음의 명령어를 입력합니다. (파일 경로는 적절하게 변경합니다.)
+같은 PowerShell 세션에서 실행합니다. 새 세션이라면 위에서 사용한 `$BackupDir`와 `$Archive`를 다시 지정합니다.
 
 ```powershell
-(Get-FileHash -Algorithm SHA256 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash | Out-File -FilePath $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt
-Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt
-```
-
-## 배포판 가져오기
-
-> ⚠️ **경고**
->
-> 배포판을 복원하기 전에, 복원하려는 파일이 신뢰할 수 있는 파일인지 다시 한 번 확인합니다. 악성 코드 등으로 오염된 배포판을 사용할 경우 시스템에 치명적인 문제가 발생하거나, 개인 정보나 민감한 정보가 탈취될 수 있습니다.
-
-만들어진 배포판을 다시 복원하기 앞서, SHA256 해시 파일의 내용을 다시 검증합니다.
-
-```powershell
-(Get-Content -Path $env:USERPROFILE\Ubuntu-24.04.tar.sha256.txt) -eq (Get-FileHash -Algorithm SHA256 -Path $env:USERPROFILE\Ubuntu-24.04.tar).Hash
-```
-
-위 명령을 실행했을 때 나오는 결과가 `True`로 표시되면 문제가 없는 것입니다.
-
-그 다음 배포판을 복원하기 위하여 다음과 같이 명령어를 입력합니다. 여기서는 사용자 홈 디렉토리에 만들어진 tar 파일을 `MyUbuntu` 라는 이름으로 `C:\Distro\MyUbuntu` 폴더에 WSL v2로 복원하는 것으로 가정하겠습니다.
-
-```powershell
-mkdir C:\Distro\MyUbuntu
-wsl.exe --import MyUbuntu C:\Distro\MyUbuntu $env:USERPROFILE\Ubuntu-24.04.tar --version 2
-```
-
-백업 파일의 크기, 디스크 입출력 속도, 그리고 WSL 버전에 따라 차이가 있을 수 있으며, 시간이 오래 걸리는 작업이므로 완료될 때까지 기다립니다.
-
-또한 추가 디스크 공간이 필요하므로, 디스크 공간이 여유가 없을 경우 별도의 외부 저장 장치를 사용하여 복원을 진행하는 것을 권장합니다.
-
-정상적으로 복원되었는지 확인하기 위하여 목록 확인 명령어를 실행해보겠습니다.
-
-```powershell
+$ExpectedHash = (Get-Content -Raw -LiteralPath "$Archive.sha256").Trim()
+$ActualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $Archive).Hash
+if ($ExpectedHash -ne $ActualHash) { throw '백업 파일의 해시가 일치하지 않습니다.' }
+$InstallDir = Join-Path $env:LOCALAPPDATA 'WSL\MyUbuntu'
+New-Item -ItemType Directory -Path $InstallDir -ErrorAction Stop | Out-Null
+wsl.exe --import MyUbuntu "$InstallDir" "$Archive" --version 2
+if ($LASTEXITCODE -ne 0) { throw '배포판 가져오기에 실패했습니다.' }
 wsl.exe --list --verbose
 ```
 
-`MyUbuntu` 라는 항목의 버전이 `2`로 표시된다면 정상적으로 복원된 것입니다.
+기존에 `MyUbuntu`가 있으면 다른 새 이름과 디렉터리를 사용합니다. 다른 컴퓨터로 이전할 때에는 CPU 아키텍처가 호환되는지도 확인합니다.
 
-## 기본 사용자 변경하기
+## 일반 사용자와 기존 설정 보존
 
-> ⚠️ **경고**
->
-> 이 작업은 레지스트리 설정 변경을 동반하는 작업입니다. 예기치 않은 사고를 방지하기 위하여 시스템 백업을 먼저 진행하시는 것을 권장합니다.
-
-공식 WSL 설치 진입점을 이용할 경우, 맨 처음에는 기본으로 사용할 사용자 계정의 이름과 비밀 번호를 입력받는 것을 본 적이 있을 것입니다. 이 과정은 내부적으로 `root` 계정이 배포판 내에 처음부터 들어있기 때문에 가능한 동작이며, 가져오기 기능을 통해서 배포판을 다시 설치한 경우에도 `root` 사용자 계정을 기본으로 사용하게 됩니다.
-
-따라서 이전처럼 원래 사용하던 계정으로 돌아가려면 배포판 안에 어떤 계정이 들어있는지 다시 한 번 확인하여 정확한 UID 값을 레지스트리에 지정해야 합니다.
-
-사용자 이름을 정확히 안다면 이 단계를 건너뛰고, 그렇지 않다면 등록된 사용자들의 목록을 확인하기 위하여 다음의 명령어를 실행합니다. 여기서는 `MyUbuntu` 배포판을 사용하는 것을 가정하겠습니다.
+[가져온 배포판의 사용자 설정](https://learn.microsoft.com/en-us/windows/wsl/use-custom-distro#add-wsl-specific-components-like-a-default-user)에 따라 복사본의 계정을 확인합니다. 다음 명령으로 root 셸을 열고 `getent passwd`에서 원본의 일반 사용자 이름을 찾은 뒤 `/etc/wsl.conf`를 편집합니다.
 
 ```powershell
-wsl.exe --distribution MyUbuntu --user root -- cat /etc/passwd
+wsl.exe -d MyUbuntu -u root --cd ~
 ```
 
-원하는 사용자 이름이 표시되거나, 정확한 사용자 이름을 알고 있다면 다음엔 아래의 명령어를 실행합니다.
+Linux에서 `getent passwd`를 실행하고 `editor /etc/wsl.conf` 또는 설치된 편집기로 파일을 엽니다. 아래 예제의 `developer`를 기존 계정 이름으로 바꾸고 기존 `[user]`가 있다면 그 안의 `default`만 수정합니다. 설정이 계정을 새로 만들지는 않습니다.
+
+### wsl.conf의 기본 사용자
+
+[배포판별 설정 참조](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#user-settings)에 따라 아래 내용을 반영합니다. `[boot]`를 비롯한 기존 설정을 보존합니다.
+
+```ini
+[user]
+default=developer
+```
+
+레지스트리 편집이나 `/etc/wsl.conf` 전체 삭제 없이 설정할 수 있습니다. 최신 WSL의 `wsl.exe --manage MyUbuntu --set-default-user developer` 지원 여부는 설치된 `wsl.exe --help`로 확인할 수 있으며 이 문서는 파일 설정 방식을 사용합니다.
+
+## 복사본 재시작과 데이터 검증
+
+Linux 셸에서 `exit`로 나온 뒤 PowerShell에서 복사본을 재시작합니다. [사용자와 작업 디렉터리 옵션](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#run-a-specific-linux-distribution-from-powershell-or-cmd)으로 실행 결과를 확인합니다.
 
 ```powershell
-wsl.exe --distribution MyUbuntu --user rkttu -- id -u
+wsl.exe --terminate MyUbuntu
+wsl.exe -d MyUbuntu --cd ~ -- whoami
+wsl.exe -d MyUbuntu --cd ~ -- pwd
+wsl.exe -d MyUbuntu --cd ~
 ```
 
-확인한 사용자 ID 값을 레지스트리에 설정해야 합니다. 관리자 권한으로 권한 상승한 PowerShell 프롬프트에서 다음의 명령어를 입력합니다. `$DistroName`과 `$UserId` 환경 변수만 적절하게 변경합니다.
+일반 사용자, 홈 파일, 개발 도구, 데이터베이스의 실제 데이터를 확인하면 복원 여부를 판단할 수 있습니다. 목록에 이름이 보이는 것만으로 데이터 복원이 모두 검증되지는 않습니다. 서비스 식별자와 SSH 호스트 키도 복제되므로 네트워크 서버로 함께 운용하거나 공유할 때에는 해당 서비스의 식별자 재발급 절차를 적용합니다.
 
-```
-$DistroName='MyUbuntu'
-$UserId='rkttu'
-$DefaultUid=(wsl.exe --distribution $DistroName --user $UserId -- id -u)
-Get-ItemProperty Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss\*\ DistributionName | Where-Object -Property DistributionName -eq $DistroName | Set-ItemProperty -Name DefaultUid -Value $DefaultUid
-```
+WSL 2는 `--export ... --vhd`와 `--import ... --vhd`, `--import-in-place`도 제공합니다. 특히 `--import-in-place`는 지정한 VHDX 자체를 등록하며 새 복사본을 만들지 않습니다. 세부 형식은 [WSL 명령 참조](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#import-a-distribution)에서 확인할 수 있습니다.
 
-이제 해당 배포판을 실행 중이었다면 종료하고 다시 실행합니다.
+## 복사 결과 점검 항목
 
-### 트러블슈팅
+1. 원본과 복사본 이름이 각각 등록되어 있는지 확인합니다.
+2. 복사본의 일반 사용자와 프로젝트 파일을 확인합니다.
+3. 필요한 서비스를 실행해 데이터를 읽을 수 있는지 확인합니다.
+4. 백업 아카이브와 해시를 원본과 다른 보관 위치에 복사합니다.
 
-만약 기본 사용자 변경이 제대로 동작하지 않는다면, `root` 사용자 계정 앞으로 `/etc/wsl.conf` 파일에 기본 사용자 설정이 들어가 있기 때문일 수 있습니다. 다음의 명령어를 실행하여 `[user]` 섹션과 함께 `default=` 설정이 들어있는지 확인합니다.
+`wsl.exe --unregister`는 해당 배포판의 등록과 데이터를 삭제합니다. 복사 절차에는 이 명령을 포함하지 않았습니다.
 
-```powershell
-wsl.exe --distribution 'MyUbuntu' --user root -- cat /etc/wsl.conf
-```
+## 복사본의 보관과 활용
 
-이 때에는 해당 파일의 설정이 더 우선시되므로, 파일을 삭제하거나 해당되는 설정을 제거하여 저장합니다.
+여기까지 정리하면 원본을 유지한 채 별도 이름의 배포판을 만들고 기본 사용자와 데이터를 검증할 수 있습니다. 복사 직후에는 실제 파일과 서비스를 확인하고 장기 보관 시에는 백업의 접근 권한과 복원 가능 여부를 관리합니다.
 
-그 다음 아래 명령어를 사용하여 WSL 전체를 Shutdown하고 다시 해당 배포판을 시작합니다. 이렇게 하는 이유는, `/etc/wsl.conf`의 설정은 레지스트리와는 별개로 WSL의 코어 시스템인 `LxssManager`에 직접 적용되는 설정이고, 해당 서비스를 다시 시작하기 전까지는 설정이 유지되기 때문입니다.
-
-```powershell
-wsl.exe --shutdown
-wsl.exe --distribution 'MyUbuntu'
-```
-
+개인 실험용 복사본은 기존 설정을 유지할 수 있습니다. 다른 사람에게 전달하거나 여러 서버로 운용할 복사본은 비밀 정보와 서비스 식별자를 정리한 별도 이미지를 사용합니다.

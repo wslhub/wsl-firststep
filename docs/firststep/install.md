@@ -1,209 +1,90 @@
-# 커맨드라인으로 WSL 2 설치하기
+# WSL 2 설치와 업데이트
 
-커맨드라인으로 WSL 2를 설치하면 간단하고 빠르게 WSL을 시작할 수 있습니다.
+2026년 9월 5일 기준으로 이 가이드는 업데이트된 Windows 11의 x64 또는 Arm64 환경을 다룹니다. WSL 2는 CPU 가상화와 가상 머신 플랫폼을 사용합니다.
 
-> 참고: 최근의 WSL은 Microsoft Store(스토어) 배포판으로 제공되며, `wsl.exe --install` / `wsl.exe --update` 기반의 설치/업데이트 흐름을 권장합니다.
+설치 조건, 배포판 선택, 최초 사용자 생성, 업데이트, 오프라인 설치를 순서대로 안내합니다.
 
-## 프로세서 아키텍처 확인하기
+Windows에서 PowerShell을 열어 진행하며 관리자 권한이 필요한 위치는 해당 절차에 표시했습니다. WSL과 Ubuntu의 버전 차이는 [최신 변경 사항](latest.md)에서 확인할 수 있습니다.
 
-내가 사용하는 컴퓨터의 프로세서의 종류와 지원 범위를 확인해야 합니다.
+## Windows와 가상화 조건
 
-| CPU 종류      | 아키텍처    | WSL v1 | WSL v2 |
-| ------------  | ----------- | ------ | ------ |
-| 인텔 프로세서 | 32비트 전용 |        |        |
-| 인텔 프로세서 | 64비트 지원 | O      | O[^A]  |
-| ARM 프로세서  | 32비트 전용 |        |        |
-| ARM 프로세서  | 64비트 지원 | O      | O[^B]  |
+설치 환경부터 확인하겠습니다. [Microsoft 설치 문서](https://learn.microsoft.com/en-us/windows/wsl/install)는 Windows 10 버전 2004 빌드 19041 이상 또는 Windows 11을 명령 기반 설치 조건으로 안내합니다. Windows 10의 지원 수명은 [수명 주기 문서](https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro)에서 따로 다룹니다.
 
-## 지원되는 윈도우 버전 확인하기
-
-내가 실행하는 윈도우 버전이 정확히 어떻게 되는지 확인하려면 PowerShell에서 다음과 같이 실행합니다.
+PowerShell에서 Windows 버전 대화상자를 엽니다.
 
 ```powershell
-[Environment]::OSVersion.Version
+winver.exe
 ```
 
-### 32비트 인텔 프로세서
+작업 관리자의 CPU 화면에서 가상화 상태를 볼 수 있습니다. 가상 머신 안에 Windows를 설치했다면 호스트의 [중첩 가상화 지원](https://learn.microsoft.com/en-us/windows/wsl/faq)이 적용됩니다. Windows Server는 [서버용 설치 안내](https://learn.microsoft.com/en-us/windows/wsl/install-on-server)를 사용합니다.
 
-32비트 인텔 프로세서에서는 WSL v1, v2 모두 지원되지 않습니다.
+## WSL 구성 요소와 배포판 설치
 
-### 64비트 인텔 프로세서
-
-| OS 버전                          | 실행 가능한 WSL 버전 | WSL 2 필요 조건               | 커맨드라인을 통한 설치 지원[^G] | WSLg 지원 |
-| -------------------------------- | -------------------- | ----------------------------- | ------------------------------- | --------- |
-| 10.0.19041 (Windows 10 v2004)    | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트[^E] | O                               |           |
-| 10.0.19044 (Windows 10 21H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
-| 10.0.19045 (Windows 10 22H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               |           |
-| 10.0.20348 (Windows Server 2022) | WSL v1, WSL v2       | CPU 가상화 [^F]               | O                               |           |
-| 10.0.22000 (Windows 11 21H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
-| 10.0.22621 (Windows 11 22H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
-| 10.0.22631 (Windows 11 23H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
-| 10.0.26100 (Windows 11 24H2)     | WSL v1, WSL v2       | CPU 가상화                    | O                               | O         |
-
-> 최신 지원 범위와 권장 설치 방법은 Microsoft Learn의 WSL 문서를 함께 확인하세요: <https://learn.microsoft.com/windows/wsl/>
->
-> Windows 10은 2025년 10월에 지원이 종료됩니다. 가능하면 Windows 11로 업그레이드하는 것을 권장합니다.
-
-### 32비트 ARM 프로세서
-
-32비트 프로세서에서는 WSL v1, v2 모두 지원되지 않습니다.
-
-### 64비트 ARM 프로세서
-
-| OS 버전                          | 실행 가능한 WSL 버전 | WSL v2 필요 조건          | 커맨드라인을 통한 설치 지원 | WSLg 지원 |
-| -------------------------------- | -------------------- | ------------------------- | --------------------------- | --------- |
-| 10.0.19041 (Windows 10 v2004)    | WSL v1, WSL v2       | CPU 가상화, 최신 업데이트 | O                           |           |
-| 10.0.19044 (Windows 10 21H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           |           |
-| 10.0.19045 (Windows 10 22H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           |           |
-| 10.0.22000 (Windows 11 21H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
-| 10.0.22621 (Windows 11 22H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
-| 10.0.22631 (Windows 11 23H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
-| 10.0.26100 (Windows 11 24H2)     | WSL v1, WSL v2       | CPU 가상화                | O                           | O         |
-
-## Windows Terminal 설치하기
-
-WSL v2를 사용하면서 기존의 내장 터미널을 사용해도 문제 없지만, 좀 더 풍부하고 다양한 기능을 사용하려면 Windows Terminal을 설치해서 사용하는 것이 좋습니다.
-
-PowerShell을 열고 아래 명령어를 붙여넣으세요.
+관리자 PowerShell에서 아래 명령으로 WSL 구성 요소를 설치합니다. 재시작 안내가 나오면 작업을 저장한 뒤 Windows를 재시작합니다. `--no-distribution`은 배포판 설치를 다음 단계로 미룹니다.
 
 ```powershell
-Start-Process 'https://aka.ms/terminal'
+wsl.exe --install --no-distribution
 ```
 
-그러면 Windows Terminal을 설치할 수 있는 스토어 페이지로 접근할 수 있고, 바로 설치를 시작할 수 있습니다.
+이 명령과 다운로드 옵션은 [WSL 기본 명령](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#install)에 설명되어 있습니다.
 
-## 자동 설치
+### 배포판 이름 선택
 
-위의 지원되는 윈도우 버전 확인하기 표에서 **커맨드라인을 통한 설치 지원**을 사용할 수 있는 OS에 해당하는 경우, 다음의 명령어를 PowerShell에서 실행하면 간편하게 설치할 수 있습니다. 아래 명령어로 WSL v2 실행에 필요한 구성 요소 (가상 머신 플랫폼, WSL v2 전용 커널)를 한 번에 설치합니다.
+Windows 재시작 후 PowerShell에서 목록을 확인하고 설치합니다. 아래 예제는 Ubuntu 26.04 LTS를 사용합니다. 프로젝트가 Ubuntu 24.04를 요구하면 목록의 `Ubuntu-24.04`를 선택합니다.
 
 ```powershell
-wsl.exe --install
+wsl.exe --list --online
+wsl.exe --install -d Ubuntu-26.04
 ```
 
-### 설치/업데이트 상태 확인하기(권장)
+설치 목록은 서비스 제공 상황에 따라 달라집니다. [공식 배포판 정의](https://github.com/microsoft/WSL/blob/master/distributions/DistributionInfo.json)와 명령 출력의 `NAME`을 기준으로 선택합니다. 버전이 없는 `Ubuntu` 이름이 항상 특정 릴리스를 뜻하지는 않습니다.
 
-최근 WSL(스토어 배포판)을 사용하는 경우 아래 명령으로 버전 및 상태 확인이 가능합니다.
+## 최초 실행과 Linux 사용자
+
+첫 실행에서 Linux 사용자 이름과 암호를 생성합니다. 암호를 입력할 때 화면에 문자가 나타나지 않아도 입력을 받습니다. Windows 계정과 Linux 계정은 각각 관리합니다. [Ubuntu 환경 설정 문서](https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password)에 초기화 과정을 설명했습니다.
+
+PowerShell에서 등록 상태를 확인하고 Linux 홈 디렉터리로 진입합니다.
 
 ```powershell
+wsl.exe --list --verbose
+wsl.exe -d Ubuntu-26.04 --cd ~
+```
+
+`VERSION`이 `2`인지 확인한 뒤 [Ubuntu 초기 설정](ubuntu.md)으로 이어갑니다. 이 열은 Ubuntu 버전이나 WSL 패키지 버전을 표시하지 않습니다.
+
+## WSL과 Ubuntu의 업데이트
+
+WSL 구성 요소 업데이트는 PowerShell에서 실행합니다. 설치된 버전과 업데이트 결과는 [WSL 명령 참조](https://learn.microsoft.com/en-us/windows/wsl/basic-commands#update-wsl)에서 설명하는 명령으로 확인합니다.
+
+```powershell
+wsl.exe --update
 wsl.exe --version
 wsl.exe --status
 ```
 
-WSL 자체 업데이트(리눅스 커널/WSLg 구성요소 포함)는 아래처럼 진행합니다.
+이어서 Ubuntu 패키지는 Ubuntu 안에서 `sudo apt update`와 `sudo apt upgrade`로 갱신합니다. Ubuntu 24.04를 Ubuntu 26.04로 바꾸는 릴리스 업그레이드는 별도 절차이며 [Canonical 업그레이드 안내](https://ubuntu.com/wsl/docs/stable/howto/upgrade-ubuntu/)에서 다룹니다.
+
+wslc 실습의 사전 릴리스 설치는 [컨테이너 가이드](wslc.md)에서만 진행합니다.
+
+## Store 접근 제한과 파일 설치
+
+다운로드가 진행되지 않거나 Store 경로를 사용할 수 없다면 [Microsoft의 다운로드 옵션](https://learn.microsoft.com/en-us/windows/wsl/install)을 적용할 수 있습니다. 아래 명령은 인터넷 연결을 사용합니다.
 
 ```powershell
-wsl.exe --update
+wsl.exe --install --web-download -d Ubuntu-26.04
 ```
 
-컴퓨터 재시작이 필요하다는 안내가 나올 경우 안내에 따라 재시작하도록 합니다. WSL 설치가 완료된 후에는 다음의 명령어를 실행하여 커맨드라인으로 설치할 수 있는 배포판의 종류를 확인합니다.
+완전한 오프라인 설치는 [WSL 릴리스](https://github.com/microsoft/WSL/releases)에서 아키텍처에 맞는 WSL MSI를 준비하고 가상 머신 플랫폼을 활성화한 뒤 배포판 이미지를 설치하는 순서로 진행합니다. 구형 커널 전용 MSI는 현재 WSL 전체 설치 패키지를 대신하지 않습니다. [.wsl 파일과 RootFS 설치](../advanced/install-from-rootfs.md)에 이미지 선택과 검증 절차를 정리했습니다.
 
-```powershell
-wsl.exe --list --online
-```
+## 설치 결과 점검
 
-원하는 배포판을 찾으면, 다음과 같이 명령어를 입력합니다. 여기서는 `Ubuntu-24.04`를 설치한다고 가정하겠습니다.
+1. `wsl.exe --version`에서 WSL 구성 요소의 버전을 확인합니다.
+2. `wsl.exe --list --verbose`에서 설치한 배포판과 WSL 2 실행 방식을 확인합니다.
+3. Ubuntu에서 `whoami`와 `pwd`로 일반 사용자와 홈 디렉터리를 확인합니다.
+4. [Ubuntu 초기 설정](ubuntu.md)으로 패키지 갱신을 진행합니다.
 
-```powershell
-wsl.exe --install -d Ubuntu-24.04
-```
+## 설치 이후의 작업 순서
 
-설치가 끝나면 자동으로 새 배포판이 실행되어 초기화 과정이 실행됩니다.
+여기까지 정리하면 WSL 구성 요소와 Linux 배포판은 각자 설치와 업데이트 절차를 사용합니다. 설치 직후에는 일반 사용자 진입과 패키지 갱신을 확인하고 장기적으로는 Windows와 Ubuntu의 지원 기간을 함께 관리합니다.
 
-Windows Terminal에는 자동으로 새 항목이 등록됩니다.
-
-## 수동 설치
-
-> 아래 수동 설치 절차는 레거시 환경(예: `wsl.exe --install`을 쓸 수 없거나, 오프라인 환경 등)에서만 필요할 수 있습니다. 가능하면 **자동 설치**를 우선 사용하세요.
-
-### WSL, HCS 옵션 켜기
-
-**NOTE: 윈도우, 리눅스, 맥, 그리고 퍼블릭 클라우드 환경에서 가상 컴퓨터 안에서 WSL을 사용하려고 Windows 10이나 Windows Server 2019 이상의 OS를 설치한 경우, 사용하는 가상 컴퓨터가 중첩 가상화 기능을 제공하는지 확인한 다음 이 단계를 따라하세요. 중첩 가상화가 작동하지 않는 가상 컴퓨터 상에 설치된 Windows 10에서는 WSL v1만 사용할 수 있습니다.**
-
-WSL v1과 v2를 모두 사용하려면 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요. 컴퓨터가 재부팅될 수 있습니다.
-
-```powershell
-If ((Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform, Microsoft-Windows-Subsystem-Linux).RestartNeeded) { Restart-Computer -Force }
-```
-
-설치가 끝난 다음에는 아래 명령어를 붙여넣으세요. 재부팅이 되었다면 다시 한 번 관리자 모드로 PowerShell을 열고 아래 명령어를 붙여넣으세요.
-
-```powershell
-wsl.exe --set-default-version 2
-```
-
-### WSL v2용 최신 리눅스 커널 업데이트하기
-
-WSL v2를 실행하려면 마이크로소프트가 배포하는 최신 버전의 리눅스 커널 패키지를 설치해야 합니다. 이 커널 패키지는 HCS 위에서 실행되는 WSL v2를 위한 전용 리눅스 커널입니다.
-
-x64 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.
-
-```powershell
-Set-Location -Path $env:USERPROFILE\Downloads
-$TargetUri = "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi"
-Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_x64.msi
-.\wsl_update_x64.msi
-```
-
-Surface Pro X처럼 ARM 프로세서를 쓰는 시스템에서는 아래와 같이 명령어를 실행합니다.
-
-```powershell
-Set-Location -Path $env:USERPROFILE\Downloads
-$TargetUri = "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi"
-Invoke-WebRequest -Uri $TargetUri -OutFile .\wsl_update_arm64.msi
-.\wsl_update_arm64.msi
-```
-
-> NOTE: 최근의 WSL은 `wsl.exe --update`를 통해 커널 업데이트가 이뤄지는 경우가 많습니다. 아래 MSI 설치는 구형/특수 케이스를 위한 절차일 수 있습니다.
-
-### Ubuntu 24.04 설치하기
-
-WSL용 리눅스를 설치하는 방법은 스토어를 이용하는 방법과 직접 설치를 하는 방법이 있습니다. 스토어를 이용하면 설치와 관리가 간편하지만 스토어 앱을 초기화할 경우 WSL 설정이 날아가는 문제가 생길 수 있어 수동으로 설치하는 방법을 추천합니다.
-
-PowerShell을 열고 아래 명령어를 붙여 넣습니다.
-
-```powershell
-Set-Location -Path $env:USERPROFILE\Downloads
-$TargetUri = "https://aka.ms/wslubuntu"
-Invoke-WebRequest -Uri $TargetUri -OutFile .\ubuntu.zip
-New-Item -Type Container -Path $env:SYSTEMDRIVE\Distro\Ubuntu
-Expand-Archive -Path .\ubuntu.zip -DestinationPath $env:SYSTEMDRIVE\Distro\Ubuntu
-Remove-Item -Path .\ubuntu.zip
-Set-Location -Path $env:SYSTEMDRIVE\Distro\Ubuntu
-.\ubuntu.exe
-```
-
-설치를 끝내고나면 Windows Terminal에는 자동으로 새 항목이 등록됩니다.
-
-만약에 Ubuntu 24.04 대신 다른 배포판을 설치하고 싶다면, 아래 부록을 참고하세요.
-
-### 다른 리눅스 패키지 찾아보기
-
-amd64 지원 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
-
-* [Ubuntu 최신 버전](https://aka.ms/wslubuntu) (권장)
-* [Ubuntu 24.04](https://aka.ms/wslubuntu2404)
-* [Ubuntu 22.04](https://aka.ms/wslubuntu2204)
-* [Debian GNU/Linux](https://aka.ms/wsl-debian-gnulinux)
-* [Kali Linux](https://aka.ms/wsl-kali-linux-new)
-* [SUSE Linux Enterprise Server 15 SP3](https://aka.ms/wsl-SUSELinuxEnterpriseServer15SP3)
-* [openSUSE Tumbleweed](https://aka.ms/wsl-opensuse-tumbleweed)
-* [Oracle Linux 8.5](https://aka.ms/wsl-oraclelinux-8-5)
-* [Oracle Linux 7.9](https://aka.ms/wsl-oraclelinux-7-9)
-* [Fedora Remix for WSL](https://github.com/WhitewaterFoundry/WSLFedoraRemix/releases/)
-
-arm64 호환 프로세서를 쓰시는 분들은 아래 패키지를 사용하실 수 있습니다.
-
-* [Ubuntu 24.04 ARM](https://aka.ms/wslubuntu2404arm)
-* [Ubuntu 22.04 ARM](https://aka.ms/wslubuntu2204arm)
-
-> 참고: Ubuntu 20.04는 2025년 4월에 표준 지원이 종료되었습니다. 새로 설치하는 경우 Ubuntu 24.04 LTS를 권장합니다.
-
-[^A]: CPU 가상화 기술이 지원되어야 합니다. 만약 가상 컴퓨터에서 윈도우 10 또는 윈도우 11을 실행 중인 경우, 중첩 가상화 기능이 설정된 인스턴스에서만 WSL v2를 실행할 수 있습니다.
-
-[^B]: 윈도우 10 버전 2004 (10.0.19041) 이상의 OS가 필요합니다.
-
-[^E]: [KB5004296](https://www.catalog.update.microsoft.com/Search.aspx?q=KB5004296) 핫픽스를 설치해야 WSL v2를 사용할 수 있습니다. 특별한 경우가 아니라면, 윈도우 업데이트를 이용하여 모든 업데이트를 설치하면 간편하게 적용이 가능합니다.
-
-[^F]: 윈도우 서버 2022의 경우 [KB5014021](https://www.catalog.update.microsoft.com/Search.aspx?q=KB5014021) 및 연관되는 업데이트를 설치하면 사용 가능합니다. [자세한 내용 보기](https://techcommunity.microsoft.com/t5/itops-talk-blog/wsl2-now-available-on-windows-server-2022/ba-p/3447570) 단, 현재 WSLg는 사용할 수 없으며, 서버 코어 모드의 경우 `--install` 스위치를 통한 설치가 불가능할 수 있습니다.
-
-[^G]: `--install` 스위치를 이용하여 한 번에 설치할 수 있는 방식을 말합니다.
+기본 개발 환경에는 정식 WSL을 사용할 수 있습니다. 별도 배포판이나 컨테이너를 실험할 때에는 기존 배포판 복제와 사전 릴리스 안내를 상황에 맞게 적용합니다.
